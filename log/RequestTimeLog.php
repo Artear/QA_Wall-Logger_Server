@@ -16,9 +16,6 @@ class RequestTimeLog extends BaseLog
     protected $logUrl;
     protected $durationMilliseconds;
 
-    /**
-     * RequestTimeLog constructor.
-     */
     public function __construct()
     {
         parent::__construct();
