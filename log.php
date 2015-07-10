@@ -7,10 +7,11 @@
  */
 
 
-use error\ErrorInvalidParams;
 use error\ErrorUnknownLogType;
 use log\LogType;
+use log\RequestTimeLog;
 use log\StringLog;
+use utils\ParametersUtil;
 use utils\ResponseWriter;
 
 spl_autoload_register(function ($className)
@@ -30,25 +31,18 @@ spl_autoload_register(function ($className)
     require $fileName;
 });
 
-$acceptedParams = array('logSession', 'logType', 'logMsg');
+$logType = ParametersUtil::getParamOrDie('logType');
 
-$logSession = filter_input(INPUT_GET, $acceptedParams[0], FILTER_SANITIZE_STRING);
-$logType = filter_input(INPUT_GET, $acceptedParams[1], FILTER_SANITIZE_STRING);
-$logMsg = filter_input(INPUT_GET, $acceptedParams[2], FILTER_SANITIZE_STRING);
-
-if (!$logSession || !$logType || !$logMsg)
-{
-    ResponseWriter::writeError(new ErrorInvalidParams($acceptedParams));
-    die();
-}
-
+$log = null;
 
 switch ($logType)
 {
     case LogType::TEXT:
-        $msg = filter_input(INPUT_GET, 'msg', FILTER_SANITIZE_STRING);
-        $log = new StringLog($logSession, $logMsg);
-        $log->writeLog();
+        $log = new StringLog();
+        break;
+
+    case LogType::REQUEST_TIME:
+        $log = new RequestTimeLog();
         break;
 
     default:
@@ -56,4 +50,8 @@ switch ($logType)
         break;
 }
 
+if ($log)
+{
+    $log->writeLog();
+}
 

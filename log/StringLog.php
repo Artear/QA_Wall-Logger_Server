@@ -9,18 +9,15 @@
 namespace log;
 
 
+use utils\ParametersUtil;
+
 class StringLog extends BaseLog
 {
-    protected $msg;
+    protected $logMsg;
 
-    /**
-     * StringLog constructor.
-     * @param $logSession
-     * @param $msg
-     */
-    public function __construct($logSession, $msg)
+    public function __construct()
     {
-        parent::__construct($logSession);
-        $this->msg = $msg;
+        parent::__construct();
+        $this->logMsg = ParametersUtil::getParamOrDie("logMsg");
     }
 }

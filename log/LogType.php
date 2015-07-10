@@ -11,5 +11,6 @@ namespace log;
 
 abstract class LogType
 {
-    const TEXT = "text";
+    const TEXT = "TEXT";
+    const REQUEST_TIME = "REQUEST_TIME";
 }

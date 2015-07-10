@@ -8,17 +8,15 @@
 
 namespace log;
 
+use utils\ParametersUtil;
+
 abstract class BaseLog
 {
     protected $logSession;
 
-    /**
-     * BaseLog constructor.
-     * @param $logSession
-     */
-    public function __construct($logSession)
+    public function __construct()
     {
-        $this->logSession = $logSession;
+        $this->logSession = ParametersUtil::getParamOrDie("logSession");
     }
 
     /**
