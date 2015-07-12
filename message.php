@@ -6,10 +6,6 @@
  * Time: 15:30
  */
 
-
-use error\ErrorUnknownLogType;
-use log\LogType;
-use log\RequestTimeLog;
 use log\StringLog;
 use utils\ParametersUtil;
 use utils\ResponseWriter;
@@ -31,27 +27,12 @@ spl_autoload_register(function ($className)
     require $fileName;
 });
 
-$logType = ParametersUtil::getParamOrDie('logType');
+//Get Params
+$logSession = ParametersUtil::getParamOrDie(StringLog::PARAM_LOG_SESSION);
+$logMsg = ParametersUtil::getParamOrDie(StringLog::PARAM_LOG_MSG);
 
-$log = null;
+//Write Log
+$log = new StringLog($logSession, $logMsg);
+$log->writeLog();
 
-switch ($logType)
-{
-    case LogType::TEXT:
-        $log = new StringLog();
-        break;
-
-    case LogType::REQUEST_TIME:
-        $log = new RequestTimeLog();
-        break;
-
-    default:
-        ResponseWriter::writeError(new ErrorUnknownLogType($logType));
-        break;
-}
-
-if ($log)
-{
-    $log->writeLog();
-}
-
+ResponseWriter::writeSuccess();

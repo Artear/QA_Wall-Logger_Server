@@ -6,12 +6,11 @@
  * Time: 12:59
  */
 
-namespace utils;
+namespace error;
 
 
 abstract class ErrorCode
 {
     const UNKNOWN = 0;
     const INVALID_PARAMETERS = 1;
-    const UNKNOWN_LOG_TYPE = 2;
 }

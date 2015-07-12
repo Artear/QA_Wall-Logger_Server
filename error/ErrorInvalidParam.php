@@ -9,8 +9,6 @@
 namespace error;
 
 
-use utils\ErrorCode;
-
 class ErrorInvalidParam extends BaseError
 {
     private $expectedParam;

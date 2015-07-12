@@ -8,15 +8,15 @@
 
 namespace log;
 
-use utils\ParametersUtil;
-
 abstract class BaseLog
 {
+    const PARAM_LOG_SESSION = "logSession";
+
     protected $logSession;
 
-    public function __construct()
+    public function __construct($logSession)
     {
-        $this->logSession = ParametersUtil::getParamOrDie("logSession");
+        $this->logSession = $logSession;
     }
 
     /**

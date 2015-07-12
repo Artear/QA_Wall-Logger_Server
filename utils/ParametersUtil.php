@@ -13,9 +13,9 @@ use error\ErrorInvalidParam;
 
 abstract class ParametersUtil
 {
-    public static function getParamOrDie($expectedParam, $sanitizeInt = FILTER_SANITIZE_STRING)
+    public static function getParamOrDie($expectedParam, $sanitizeInt = FILTER_SANITIZE_STRING, $inputStream = INPUT_GET)
     {
-        $foundParam = filter_input(INPUT_GET, $expectedParam, $sanitizeInt);
+        $foundParam = filter_input($inputStream, $expectedParam, $sanitizeInt);
 
         if (!$foundParam)
         {

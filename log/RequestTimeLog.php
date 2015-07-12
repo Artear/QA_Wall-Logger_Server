@@ -9,17 +9,30 @@
 namespace log;
 
 
-use utils\ParametersUtil;
-
 class RequestTimeLog extends BaseLog
 {
-    protected $logUrl;
-    protected $durationMilliseconds;
+    const PARAM_URL = "url";
+    const PARAM_TIME_START = "timeStart";
+    const PARAM_TIME_END = "timeEnd";
 
-    public function __construct()
+    protected $url;
+    protected $timeStart;
+    protected $timeEnd;
+
+    /**
+     * RequestTimeLog constructor.
+     * @param $logSession
+     * @param $url
+     * @param $timeStart
+     * @param $timeEnd
+     */
+    public function __construct($logSession, $url, $timeStart, $timeEnd)
     {
-        parent::__construct();
-        $this->logUrl = ParametersUtil::getParamOrDie("logUrl", FILTER_SANITIZE_URL);
-        $this->durationMilliseconds = ParametersUtil::getParamOrDie("durationMilliseconds", FILTER_SANITIZE_NUMBER_INT);
+        parent::__construct($logSession);
+        $this->url = $url;
+        $this->timeStart = $timeStart;
+        $this->timeEnd = $timeEnd;
     }
+
+
 }
