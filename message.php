@@ -6,6 +6,8 @@
  * Time: 15:30
  */
 
+use error\InvalidParamException;
+use error\WriteException;
 use log\MessageLog;
 use utils\ParametersUtil;
 use utils\ResponseWriter;
@@ -27,12 +29,21 @@ spl_autoload_register(function ($className)
     require $fileName;
 });
 
-//Get Params
-$logSession = ParametersUtil::getParamOrDie(MessageLog::PARAM_LOG_SESSION);
-$logMsg = ParametersUtil::getParamOrDie(MessageLog::PARAM_LOG_MSG);
+try
+{
+    //Get Params
+    $logSession = ParametersUtil::getParamOrThrow(MessageLog::PARAM_LOG_SESSION);
+    $logMsg = ParametersUtil::getParamOrThrow(MessageLog::PARAM_LOG_MSG);
 
-//Write Log
-$log = new MessageLog($logSession, $logMsg);
-$log->writeLog();
+    //Write Log
+    $log = new MessageLog($logSession, $logMsg);
+    $log->writeLog();
+    ResponseWriter::writeSuccess();
 
-ResponseWriter::writeSuccess();
+} catch (InvalidParamException $invalidParamsException)
+{
+    ResponseWriter::writeError($invalidParamsException);
+} catch (WriteException $writeException)
+{
+    ResponseWriter::writeError($writeException);
+}

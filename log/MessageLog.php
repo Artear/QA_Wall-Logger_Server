@@ -24,4 +24,14 @@ class MessageLog extends BaseLog
         parent::__construct($logSession);
         $this->logMsg = $msg;
     }
+
+
+    /**
+     * @return boolean flagging if the write succeeded
+     */
+    protected function onWrite()
+    {
+        print_r(json_encode(get_object_vars($this)));
+        return true;
+    }
 }

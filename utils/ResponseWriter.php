@@ -2,7 +2,7 @@
 
 namespace utils;
 
-use error\BaseError;
+use error\BaseException;
 
 class ResponseWriter
 {
@@ -11,10 +11,15 @@ class ResponseWriter
         http_response_code(200);
     }
 
-    static function writeError(BaseError $errorObj)
+    static function writeError(BaseException $errorObj)
+    {
+        ResponseWriter::writeErrorMsg($errorObj->getErrorCode(), $errorObj->getErrorMsg());
+    }
+
+    static function writeErrorMsg($errorCode, $errorMsg)
     {
         http_response_code(400);
-        $jsonError = new JsonError($errorObj->getErrorCode(), $errorObj->getErrorMsg());
+        $jsonError = new JsonError($errorCode, $errorMsg);
         echo json_encode($jsonError);
     }
 }

@@ -8,6 +8,8 @@
 
 namespace log;
 
+use error\WriteException;
+
 abstract class BaseLog
 {
     const PARAM_LOG_SESSION = "logSession";
@@ -20,15 +22,15 @@ abstract class BaseLog
     }
 
     /**
-     * @return object containing the log information to write;
+     * @return boolean flagging if the write succeeded
      */
-    protected function onWrite()
-    {
-        return json_encode(get_object_vars($this));
-    }
+    protected abstract function onWrite();
 
     public final function writeLog()
     {
-        print_r($this->onWrite());
+        if (!$this->onWrite())
+        {
+            throw new WriteException("Can't write object: " . json_encode(get_object_vars($this)));
+        }
     }
 }

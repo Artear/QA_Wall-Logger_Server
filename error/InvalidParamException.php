@@ -9,7 +9,7 @@
 namespace error;
 
 
-class ErrorInvalidParam extends BaseError
+class InvalidParamException extends BaseException
 {
     private $expectedParam;
 

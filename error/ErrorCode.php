@@ -13,4 +13,5 @@ abstract class ErrorCode
 {
     const UNKNOWN = 0;
     const INVALID_PARAMETERS = 1;
+    const WRITE_ERROR = 2;
 }

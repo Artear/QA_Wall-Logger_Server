@@ -9,18 +9,17 @@
 namespace utils;
 
 
-use error\ErrorInvalidParam;
+use error\InvalidParamException;
 
 abstract class ParametersUtil
 {
-    public static function getParamOrDie($expectedParam, $sanitizeInt = FILTER_SANITIZE_STRING, $inputStream = INPUT_GET)
+    public static function getParamOrThrow($expectedParam, $sanitizeInt = FILTER_SANITIZE_STRING, $inputStream = INPUT_GET)
     {
         $foundParam = filter_input($inputStream, $expectedParam, $sanitizeInt);
 
         if (!$foundParam)
         {
-            ResponseWriter::writeError(new ErrorInvalidParam($expectedParam));
-            die();
+            throw new InvalidParamException($expectedParam);
         }
 
         return $foundParam;
