@@ -9,7 +9,7 @@
 namespace log;
 
 
-class StringLog extends BaseLog
+class MessageLog extends BaseLog
 {
     const PARAM_LOG_MSG = "logMsg";
 

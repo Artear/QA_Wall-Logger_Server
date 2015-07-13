@@ -6,7 +6,7 @@
  * Time: 15:30
  */
 
-use log\StringLog;
+use log\MessageLog;
 use utils\ParametersUtil;
 use utils\ResponseWriter;
 
@@ -28,11 +28,11 @@ spl_autoload_register(function ($className)
 });
 
 //Get Params
-$logSession = ParametersUtil::getParamOrDie(StringLog::PARAM_LOG_SESSION);
-$logMsg = ParametersUtil::getParamOrDie(StringLog::PARAM_LOG_MSG);
+$logSession = ParametersUtil::getParamOrDie(MessageLog::PARAM_LOG_SESSION);
+$logMsg = ParametersUtil::getParamOrDie(MessageLog::PARAM_LOG_MSG);
 
 //Write Log
-$log = new StringLog($logSession, $logMsg);
+$log = new MessageLog($logSession, $logMsg);
 $log->writeLog();
 
 ResponseWriter::writeSuccess();
