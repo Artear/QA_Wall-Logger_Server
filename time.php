@@ -6,6 +6,7 @@
  * Time: 15:30
  */
 
+use error\ErrorCode;
 use error\InvalidParamException;
 use error\WriteException;
 use log\RequestTimeLog;
@@ -50,4 +51,7 @@ try
 } catch (WriteException $writeException)
 {
     ResponseWriter::writeError($writeException);
+} catch (Exception $exception)
+{
+    ResponseWriter::writeErrorMsg(ErrorCode::UNKNOWN, $exception->getMessage());
 }
