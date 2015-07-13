@@ -38,6 +38,7 @@ try
     //Write Log
     $log = new MessageLog($logSession, $logMsg);
     $log->writeLog();
+
     ResponseWriter::writeSuccess();
 
 } catch (InvalidParamException $invalidParamsException)

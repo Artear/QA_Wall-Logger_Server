@@ -43,6 +43,7 @@ try
     $log->writeLog();
 
     ResponseWriter::writeSuccess();
+
 } catch (InvalidParamException $invalidParamsException)
 {
     ResponseWriter::writeError($invalidParamsException);
