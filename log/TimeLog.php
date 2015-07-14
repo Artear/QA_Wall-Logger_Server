@@ -11,7 +11,7 @@ namespace log;
 
 use utils\ParametersUtil;
 
-class RequestTimeLog extends BaseLog
+class TimeLog extends BaseLog
 {
     const PARAM_LOG_MSG = "logMsg";
     const PARAM_TIME_START = "timeStart";

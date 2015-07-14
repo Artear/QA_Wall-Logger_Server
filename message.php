@@ -8,8 +8,10 @@
 
 use error\ErrorCode;
 use error\InvalidParamException;
+use error\JsonException;
 use error\WriteException;
 use log\MessageLog;
+use utils\ParametersUtil;
 use utils\ResponseWriter;
 
 spl_autoload_register(function ($className)
@@ -33,7 +35,7 @@ try
 {
     //Get Json
     $inputJSON = file_get_contents('php://input');
-    $jsonObject = json_decode($inputJSON);
+    $jsonObject = ParametersUtil::getJsonOrThrow($inputJSON);
 
     //Write Log
     $log = new MessageLog($jsonObject);
@@ -47,6 +49,9 @@ try
 } catch (WriteException $writeException)
 {
     ResponseWriter::writeError($writeException);
+} catch (JsonException $jsonException)
+{
+    ResponseWriter::writeErrorMsg(ErrorCode::JSON_ERROR, $jsonException->getMessage());
 } catch (Exception $exception)
 {
     ResponseWriter::writeErrorMsg(ErrorCode::UNKNOWN, $exception->getMessage());

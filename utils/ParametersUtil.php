@@ -10,6 +10,7 @@ namespace utils;
 
 
 use error\InvalidParamException;
+use error\JsonException;
 
 abstract class ParametersUtil
 {
@@ -36,5 +37,22 @@ abstract class ParametersUtil
         }
 
         throw new InvalidParamException($propertyName);
+    }
+
+    public static function getJsonOrThrow($jsonString)
+    {
+        if (!$jsonString)
+        {
+            throw new JsonException("No data to parse!");
+        }
+
+        $jsonObject = json_decode($jsonString);
+
+        if (json_last_error() != JSON_ERROR_NONE)
+        {
+            throw new JsonException(json_last_error_msg());
+        }
+
+        return $jsonObject;
     }
 }
