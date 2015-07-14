@@ -10,7 +10,6 @@ use error\ErrorCode;
 use error\InvalidParamException;
 use error\WriteException;
 use log\MessageLog;
-use utils\ParametersUtil;
 use utils\ResponseWriter;
 
 spl_autoload_register(function ($className)
@@ -32,12 +31,12 @@ spl_autoload_register(function ($className)
 
 try
 {
-    //Get Params
-    $logSession = ParametersUtil::getParamOrThrow(MessageLog::PARAM_LOG_SESSION);
-    $logMsg = ParametersUtil::getParamOrThrow(MessageLog::PARAM_LOG_MSG);
+    //Get Json
+    $inputJSON = file_get_contents('php://input');
+    $jsonObject = json_decode($inputJSON);
 
     //Write Log
-    $log = new MessageLog($logSession, $logMsg);
+    $log = new MessageLog($jsonObject);
     $log->writeLog();
 
     ResponseWriter::writeSuccess();

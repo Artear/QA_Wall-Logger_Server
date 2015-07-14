@@ -9,6 +9,8 @@
 namespace log;
 
 
+use utils\ParametersUtil;
+
 class MessageLog extends BaseLog
 {
     const PARAM_LOG_MSG = "logMsg";
@@ -16,13 +18,13 @@ class MessageLog extends BaseLog
     protected $logMsg;
 
     /**
-     * @param $logSession
-     * @param $msg
+     * @param \stdClass $jsonObject
      */
-    public function __construct($logSession, $msg)
+    public function __construct(\stdClass $jsonObject)
     {
-        parent::__construct($logSession);
-        $this->logMsg = $msg;
+        parent::__construct($jsonObject);
+
+        $this->logMsg = ParametersUtil::getPropertyOrThrow(self::PARAM_LOG_MSG, $jsonObject);
     }
 
 

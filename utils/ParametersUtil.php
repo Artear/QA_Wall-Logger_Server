@@ -24,4 +24,17 @@ abstract class ParametersUtil
 
         return $foundParam;
     }
+
+    public static function getPropertyOrThrow($propertyName, \stdClass $object)
+    {
+        foreach (get_object_vars($object) as $property => $value)
+        {
+            if ($property == $propertyName)
+            {
+                return $value;
+            }
+        }
+
+        throw new InvalidParamException($propertyName);
+    }
 }

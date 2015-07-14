@@ -12,13 +12,8 @@ use error\WriteException;
 
 abstract class BaseLog
 {
-    const PARAM_LOG_SESSION = "logSession";
-
-    protected $logSession;
-
-    public function __construct($logSession)
+    public function __construct(\stdClass $jsonObject)
     {
-        $this->logSession = $logSession;
     }
 
     /**

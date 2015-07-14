@@ -9,29 +9,28 @@
 namespace log;
 
 
+use utils\ParametersUtil;
+
 class RequestTimeLog extends BaseLog
 {
-    const PARAM_URL = "url";
+    const PARAM_LOG_MSG = "logMsg";
     const PARAM_TIME_START = "timeStart";
     const PARAM_TIME_END = "timeEnd";
 
-    protected $url;
+    protected $logMsg;
     protected $timeStart;
     protected $timeEnd;
 
     /**
      * RequestTimeLog constructor.
-     * @param $logSession
-     * @param $url
-     * @param $timeStart
-     * @param $timeEnd
+     * @param \stdClass $jsonObject
      */
-    public function __construct($logSession, $url, $timeStart, $timeEnd)
+    public function __construct(\stdClass $jsonObject)
     {
-        parent::__construct($logSession);
-        $this->url = $url;
-        $this->timeStart = $timeStart;
-        $this->timeEnd = $timeEnd;
+        parent::__construct($jsonObject);
+        $this->logMsg = ParametersUtil::getPropertyOrThrow(self::PARAM_LOG_MSG, $jsonObject);
+        $this->timeStart = ParametersUtil::getPropertyOrThrow(self::PARAM_TIME_START, $jsonObject);
+        $this->timeEnd = ParametersUtil::getPropertyOrThrow(self::PARAM_TIME_END, $jsonObject);
     }
 
 
