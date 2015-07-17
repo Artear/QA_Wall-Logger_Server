@@ -38,6 +38,10 @@ io.on('connection', function (socket) {
     socket.emit('page', currentPage);
   }
 
+  setInterval(function(){
+    socket.emit('test', {message:"hola"});
+  }, 5000);
+
   /**
    * Log messages to statistics room
    */
