@@ -14,6 +14,8 @@ io.on('connection', function (socket) {
 
   socket.on('message', function (data) {
     console.log(data);
+
+    socket.emit('message', { message: 'thx for your data' });
   });
 
 });
