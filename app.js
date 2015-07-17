@@ -105,7 +105,7 @@ function startWPT(data, socket){
   
   wpt.runTest(url, data, function callback(err, data) {
     io.sockets.in('statistics').emit('pagespeed', data);
-    //console.log(err || data);
+    console.log('WPT:', err || data);
   });
   
 }
