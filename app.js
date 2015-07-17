@@ -47,7 +47,7 @@ io.on('connection', function (socket) {
 
   socket.emit('connected', { message: 'hello new client!' });
 
-  socket.on('message', function (data) {
+  socket.on('log', function (data) {
     _debug(data);
     io.sockets.in('statistics').emit('message', data);
   });
@@ -63,7 +63,7 @@ io.on('connection', function (socket) {
    * Init Hook
    * Send the init event to apps
    */
-  socket.on('init', function(data){
+  socket.on('page', function(data){
 
     //request page speed
     startPSI(data, socket);
@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
     //startWPT(data);
 
     //send init hook to Apps
-    socket.broadcast.emit('init', data);
+    socket.broadcast.emit('page', data);
   });
 
 });
@@ -87,7 +87,3 @@ function startPSI(data, socket) {
     io.sockets.in('statistics').emit('pagespeed', data);
   });
 }
-
-psi('tn.com.ar', function (err, data) {
-  console.log(data);
-});
