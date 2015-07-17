@@ -8,22 +8,32 @@ var psi = require('psi');
  * @type {number}
  */
 var PORT = 9187;
+var DEBUG = true;
 
+/**
+ * Init Socket Server
+ */
 server.listen(PORT, function(){
   console.log('listening post: ' + PORT);
 });
 
+/**
+ * Root Server
+ */
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+/**
+ * Socket Events
+ */
 io.on('connection', function (socket) {
 
   socket.emit('connected', { message: 'hello new client!' });
 
   socket.on('message', function (data) {
-    console.log(data);
-    socket.emit('message', { message: 'thx for your data' });
+    _debug(data);
+    io.sockets.in('statistics').emit('message', data);
   });
 
   /**
@@ -47,6 +57,12 @@ io.on('connection', function (socket) {
   });
 
 });
+
+function _debug(data) {
+  if(DEBUG == true) {
+    console.log(data);
+  }
+}
 
 function startPSI(data, socket) {
   psi(data.url, function (err, data) {
