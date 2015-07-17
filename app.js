@@ -2,6 +2,8 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var psi = require('psi');
+var WebPageTest = require('webpagetest');
+var wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
 
 /**
  * Socket Port
@@ -25,9 +27,9 @@ app.get('/', function (req, res) {
 });
 
 /*
-var WebPageTest = require('webpagetest');
 
-var wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
+
+
 
 var config = {"connectivity":"3G",
               "location":"Dulles_MotoG:Motorola G - Chrome",
@@ -35,9 +37,6 @@ var config = {"connectivity":"3G",
               
               //login password
 
-wpt.runTest('m.tn.com.ar', config, function callback(err, data) {
-  console.log(err || data);
-});
 */
 
 /**
@@ -68,7 +67,7 @@ io.on('connection', function (socket) {
     //request page speed
     startPSI(data, socket);
     
-    //startWPT(data);
+    startWPT(data);
 
     //send init hook to Apps
     socket.broadcast.emit('page', data);
@@ -86,4 +85,16 @@ function startPSI(data, socket) {
   psi(data.url, function (err, data) {
     io.sockets.in('statistics').emit('pagespeed', data);
   });
+}
+
+function startWPT(data){
+  console.log('WPT', data);
+  
+  var url = data.url;
+  delete(data.url);
+  
+  wpt.runTest(url, data, function callback(err, data) {
+    console.log(err || data);
+  });
+  
 }
