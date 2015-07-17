@@ -6,11 +6,13 @@ var WebPageTest = require('webpagetest');
 var wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
 
 /**
- * Socket Port
- * @type {number}
+ * globals
  */
-var PORT = 9187;
-var DEBUG = true;
+var PORT = 9187,
+    DEBUG = true,
+    currentPage = {
+      url:'http://tn.com.ar'
+    };
 
 /**
  * Init Socket Server
@@ -26,29 +28,29 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-/*
-
-
-
-
-var config = {"connectivity":"3G",
-              "location":"Dulles_MotoG:Motorola G - Chrome",
-              "runs":"3"};
-              
-              //login password
-
-*/
 
 /**
  * Socket Events
  */
 io.on('connection', function (socket) {
 
-  socket.emit('connected', { message: 'hello new client!' });
+  /**
+   * if isset currentPage send to client
+   */
+  if(currentPage != null) {
+    socket.emit('page', currentPage);
+  }
 
+  setInterval(function(){
+    socket.emit('test', {message:"hola"});
+  }, 5000);
+
+  /**
+   * Log messages to statistics room
+   */
   socket.on('log', function (data) {
     _debug(data);
-    io.sockets.in('statistics').emit('message', data);
+    io.sockets.in('statistics').emit('log', data);
   });
 
   /**
@@ -63,14 +65,22 @@ io.on('connection', function (socket) {
    * Send the init event to apps
    */
   socket.on('page', function(data){
-
-    //request page speed
-    startPSI(data, socket);
-    
-    startWPT(data);
+   
+    //set current page
+    currentPage = data;
 
     //send init hook to Apps
     socket.broadcast.emit('page', data);
+
+    //request page speed
+    startPSI(data, socket);
+    startWPT(data, socket);
+    
+  });
+
+  socket.on('reset', function(data){
+    currentPage = null;
+    socket.broadcast.emit('reset', data);
   });
 
 });
@@ -87,14 +97,15 @@ function startPSI(data, socket) {
   });
 }
 
-function startWPT(data){
+function startWPT(data, socket){
   console.log('WPT', data);
   
   var url = data.url;
   delete(data.url);
   
   wpt.runTest(url, data, function callback(err, data) {
-    console.log(err || data);
+    io.sockets.in('statistics').emit('pagespeed', data);
+    //console.log(err || data);
   });
   
 }
