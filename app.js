@@ -14,7 +14,7 @@ var DEBUG = true;
  * Init Socket Server
  */
 server.listen(PORT, function(){
-  console.log('listening post: ' + PORT);
+  console.log('listening port: ' + PORT);
 });
 
 /**
