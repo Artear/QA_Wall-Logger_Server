@@ -98,14 +98,14 @@ function startPSI(data, socket) {
 }
 
 function startWPT(data, socket){
-  console.log('WPT', data);
+  console.log('WPT config', data);
   
   var url = data.url;
   delete(data.url);
   
   wpt.runTest(url, data, function callback(err, data) {
-    io.sockets.in('statistics').emit('pagespeed', data);
-    console.log('WPT:', err || data);
+    io.sockets.in('statistics').emit('wpt', data);
+    console.log('WPT status:', err || data);
   });
   
 }
