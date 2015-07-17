@@ -8,7 +8,9 @@ var psi = require('psi');
  */
 var PORT = 9187,
     DEBUG = true,
-    currentPage = null;
+    currentPage = {
+      url:'http://tn.com.ar'
+    };
 
 /**
  * Init Socket Server
@@ -28,8 +30,6 @@ app.get('/', function (req, res) {
  * Socket Events
  */
 io.on('connection', function (socket) {
-
-  socket.emit('connected', { message: 'hello new client!' });
 
   /**
    * if isset currentPage send to client
