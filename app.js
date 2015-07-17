@@ -1,18 +1,16 @@
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var psi = require('psi');
-var WebPageTest = require('webpagetest');
-var wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
+var app = require('express')(),
+    server = require('http').Server(app),
+    io = require('socket.io')(server),
+    psi = require('psi'),
+    WebPageTest = require('webpagetest'),
+    wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
 
 /**
  * globals
  */
 var PORT = 9187,
-    DEBUG = true,
-    currentPage = {
-      url:'http://tn.com.ar'
-    };
+    DEBUG = false,
+    currentPage = {};
 
 /**
  * Init Socket Server
@@ -37,19 +35,14 @@ io.on('connection', function (socket) {
   /**
    * if isset currentPage send to client
    */
-  if(currentPage != null) {
+  if(currentPage.url) {
     socket.emit('page', currentPage);
   }
-
-  setInterval(function(){
-    socket.emit('test', {message:"hola"});
-  }, 5000);
 
   /**
    * Log messages to statistics room
    */
   socket.on('log', function (data) {
-    _debug(data);
     io.sockets.in('statistics').emit('log', data);
   });
 
@@ -70,16 +63,15 @@ io.on('connection', function (socket) {
     currentPage = data;
 
     //send init hook to Apps
-    socket.broadcast.emit('page', data);
+    socket.broadcast.emit('page', currentPage);
 
     //request page speed
     startPSI(data, socket);
     startWPT(data, socket);
-    
   });
 
   socket.on('reset', function(data){
-    currentPage = null;
+    currentPage = {};
     socket.broadcast.emit('reset', data);
   });
 
@@ -98,8 +90,6 @@ function startPSI(data, socket) {
 }
 
 function startWPT(data, socket){
-  console.log('WPT config', data);
-  
   var url = data.url;
   delete(data.url);
   
@@ -107,5 +97,4 @@ function startWPT(data, socket){
     io.sockets.in('statistics').emit('wpt', data);
     console.log('WPT status:', err || data);
   });
-  
 }
