@@ -66,6 +66,10 @@ function _debug(data) {
 
 function startPSI(data, socket) {
   psi(data.url, function (err, data) {
-    io.sockets.in('statistics').emit('pageSpeed', data);
+    io.sockets.in('statistics').emit('pagespeed', data);
   });
 }
+
+psi('tn.com.ar', function (err, data) {
+  console.log(data);
+});
