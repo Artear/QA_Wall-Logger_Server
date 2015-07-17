@@ -4,13 +4,11 @@ var io = require('socket.io')(server);
 var psi = require('psi');
 
 /**
- * Socket Port
- * @type {number}
+ * globals
  */
 var PORT = 9187,
-    DEBUG = true
+    DEBUG = true,
     currentPage = null;
-
 
 /**
  * Init Socket Server
