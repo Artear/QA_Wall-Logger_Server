@@ -7,8 +7,10 @@ var psi = require('psi');
  * Socket Port
  * @type {number}
  */
-var PORT = 9187;
-var DEBUG = true;
+var PORT = 9187,
+    DEBUG = true
+    currentPage = null;
+
 
 /**
  * Init Socket Server
@@ -31,9 +33,19 @@ io.on('connection', function (socket) {
 
   socket.emit('connected', { message: 'hello new client!' });
 
+  /**
+   * if isset currentPage send to client
+   */
+  if(currentPage != null) {
+    socket.emit('page', currentPage);
+  }
+
+  /**
+   * Log messages to statistics room
+   */
   socket.on('log', function (data) {
     _debug(data);
-    io.sockets.in('statistics').emit('message', data);
+    io.sockets.in('statistics').emit('log', data);
   });
 
   /**
@@ -49,11 +61,19 @@ io.on('connection', function (socket) {
    */
   socket.on('page', function(data){
 
-    //request page speed
-    startPSI(data, socket);
+    //set current page
+    currentPage = data;
 
     //send init hook to Apps
     socket.broadcast.emit('page', data);
+
+    //request page speed
+    startPSI(data, socket);
+  });
+
+  socket.on('reset', function(data){
+    currentPage = null;
+    socket.broadcast.emit('reset', data);
   });
 
 });
