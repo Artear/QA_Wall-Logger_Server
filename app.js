@@ -5,6 +5,8 @@ var app = require('express')(),
     WebPageTest = require('webpagetest'),
     wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
 
+var xhr = require("xhr");
+
 /**
  * globals
  */
@@ -23,7 +25,8 @@ server.listen(PORT, function(){
  * Socket Events
  */
 io.on('connection', function (socket) {
-  console.log('seconcetc')
+  console.log('hellow');
+
   /**
    * if isset currentPage send to client
    */
@@ -58,7 +61,7 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('page', currentPage);
 
     //request page speed
-    //startPSI(data, socket);
+    startPSI(data, socket);
     startWPT(data, socket);
   });
 
@@ -94,53 +97,14 @@ function startWPT(data, socket){
   var url = data.url;
   delete(data.url);
 
-  console.log('WPT config', data);
-
-  return;
-  
   wpt.runTest(url, data, function callback(err, wptdata) {
-    
+
     if (wptdata.statusCode != 200) {
       return;
     }
-    /*
-    (function wptcheck(){
-       setTimeout(function(){
-        wptdata.data =  {};
-        wptdata.data.jsonUrl = 'http://www.webpagetest.org/jsonResult.php?test=150717_XG_13TX';
-        
-        
-        var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", wptdata.data.jsonUrl, true );        
-            xmlHttp.onreadystatechange=function(){
-              if( (xmlHttp.readyState==4) && (xmlHttp.status==200)){
-                console.log(xmlHttp.responseText);
-              }
-            };
-        
-        http.get(, function(res) {
-          console.log("Got response: " + res.statusCode);
-          for (i in res) {
-            console.log(i)
-          }
-          console.log(res.client)
-          
-          //console.log(res.content)
-          //io.sockets.in('statistics').emit('wpt', res);
-          if (wptdata.data.statusCode != 200) {
-            console.log('no esta todavia');
-            wptcheck();
-          } else {
-            console.log('le wii~');
-            io.sockets.in('statistics').emit('wpt', wptdata);
-          }
-        }).on('error', function(e) {
-          console.log("Got error: " + e.message, e);
-        });         
-         console.log(wptdata.data);
-       }, 1000);
-    })();
-    */    
+
+    socket.emit('wpt', wptdata.data);
+
     console.log('WPT status:', err || wptdata);
   });
 }
