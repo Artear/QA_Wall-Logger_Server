@@ -20,18 +20,10 @@ server.listen(PORT, function(){
 });
 
 /**
- * Root Server
- */
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
-});
-
-
-/**
  * Socket Events
  */
 io.on('connection', function (socket) {
-
+  console.log('seconcetc')
   /**
    * if isset currentPage send to client
    */
