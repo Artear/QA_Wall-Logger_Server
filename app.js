@@ -58,8 +58,8 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('page', currentPage);
 
     //request page speed
-    startPSI(data, socket);
-    //startWPT(data, socket);
+    //startPSI(data, socket);
+    startWPT(data, socket);
   });
 
   socket.on('reset', function(data){
@@ -89,10 +89,14 @@ function startWPT(data, socket){
   url: 'http://tn.com.ar' };  
   */
  
-  console.log('WPT config', data);
+
   
   var url = data.url;
   delete(data.url);
+
+  console.log('WPT config', data);
+
+  return;
   
   wpt.runTest(url, data, function callback(err, wptdata) {
     
