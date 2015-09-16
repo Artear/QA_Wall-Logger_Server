@@ -5,8 +5,6 @@ var app = require('express')(),
     WebPageTest = require('webpagetest'),
     wpt = new WebPageTest('www.webpagetest.org', 'A.559d4ae5af277d98b7ba0857515714cd');
 
-var xhr = require("xhr");
-
 /**
  * globals
  */
