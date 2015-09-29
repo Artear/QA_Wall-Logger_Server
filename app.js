@@ -59,7 +59,7 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('page', currentPage);
 
     //request page speed
-    startPSI(data, socket);
+    //startPSI(data, socket);
     startWPT(data, socket);
   });
 
@@ -74,24 +74,15 @@ function _debug(data) {
     console.log(data);
   }
 }
-
+/*
 function startPSI(data, socket) {
   psi(data.url, function (err, psidata) {
     io.sockets.in('statistics').emit('pagespeed', psidata);
   });
 }
-
+*/
 function startWPT(data, socket){
-  
-  /*
-  data = { runs: '3',
-  connectivity: '3G',
-  location: 'ec2-sa-east-1:Chrome',
-  url: 'http://tn.com.ar' };  
-  */
- 
 
-  
   var url = data.url;
   delete(data.url);
 
