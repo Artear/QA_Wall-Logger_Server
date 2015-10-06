@@ -9,8 +9,8 @@ var app = require('express')(),
       client_secret: "0404717faef381a7d60ad7a0d3aca3ffedbf5373"
     });
 
-
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
+
 /**
  * globals
  */
