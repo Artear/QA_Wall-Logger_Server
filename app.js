@@ -68,7 +68,7 @@ io.on('connection', function (socket) {
     //startPSI(data, socket);
     startWPT(data, socket);
 
-    var url = 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(data.url)
+    var url = 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(data.url);
 
     bitly.shorten({longUrl:url}, function(err, results) {
       results = JSON.parse(results);
@@ -109,7 +109,8 @@ function startWPT(data, socket){
 
     console.log('WPT status:', err || wptdata);
 
-    bitly.shorten({longUrl:wptdata.userUrl}, function(err, results) {
+    bitly.shorten({longUrl:wptdata.data.userUrl}, function(err, results) {
+
       results = JSON.parse(results);
       socket.emit('bitly.wpt', results.data.url);
     });
