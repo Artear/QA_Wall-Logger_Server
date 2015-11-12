@@ -8,15 +8,47 @@ var app = require('express')(),
       client_id: "3d4a4e7c2c8cfa6e6d357f93bc83a13220feb899",
       client_secret: "0404717faef381a7d60ad7a0d3aca3ffedbf5373"
     });
-
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
 
 /**
  * globals
  */
 var PORT = 9187,
+    PORTAPP = 9188,
     DEBUG = false,
     currentPage = {};
+
+app.get("/", function(req, res) {
+  res.send('POST/GET SERVER');
+});
+
+app.post("/", function(req, res) {
+  //TODO:change POST with req.JSON when it's available
+  var requestBody = '', message = '';
+
+  req.setEncoding('utf8');
+
+  req.on('data', function (chunk) {
+    requestBody += chunk;
+    console.log(requestBody);
+  });
+
+  req.on('end', function () {
+    //message = JSON.parse(requestBody);
+    io.sockets.in('statistics').emit('log', message);
+    res.sendStatus(200);
+  });
+
+});
+
+app.get(/^(.+)$/, function(req, res){
+  console.log('static file request : ' + req.params);
+  res.sendfile( __dirname + req.params[0]);
+});
+
+app.listen (PORTAPP, function() {
+  console.log("listening port for http", PORTAPP);
+});
 
 /**
  * Init Socket Server
