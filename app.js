@@ -30,13 +30,21 @@ app.post("/", function(req, res) {
 
   req.on('data', function (chunk) {
     requestBody += chunk;
-    console.log(requestBody);
   });
 
   req.on('end', function () {
-    //message = JSON.parse(requestBody);
-    io.sockets.in('statistics').emit('log', message);
-    res.sendStatus(200);
+    try {
+
+      message = JSON.parse(requestBody);
+      io.sockets.in('statistics').emit('log', message);
+      console.log(message);
+      res.sendStatus(200);
+    } catch(e){
+
+      console.log("JSON FAIL");
+      res.sendStatus(401)
+
+    }
   });
 
 });
