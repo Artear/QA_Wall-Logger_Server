@@ -10,9 +10,9 @@
 
     - if (get_enviroment() == 'dev')
       %link{:href => "css/normalize.css", :rel => "stylesheet", :type => "text/css"}
-      %link{:href => "css/qaserver.css", :rel => "stylesheet", :type => "text/css"}
+      %link{:href => "css/qaw-server.css", :rel => "stylesheet", :type => "text/css"}
     - else
-      %link{:href => "css/qaserver-min.css", :rel => "stylesheet", :type => "text/css"}
+      %link{:href => "css/qaw-server-min.css", :rel => "stylesheet", :type => "text/css"}
 
   %body
 
@@ -21,18 +21,19 @@
         .wrapper
           .logo.logo-small QA Wall
 
-      %form#main-form.main-form{:method => "post"}
+      %form#main-form.main-form{:method => "post", :enctype=>"multipart/form-data", :action=>"api/upload"}
 
         %fieldset.wrapper
           .frm-row
-            %label{:for=>"frm-url"} Ingresar URL
-            %input#frm-url.main-input{:name => "url", :placeholder => "Ingresar URL", :type => "url", :required=>"required"}
+            %label{:for=>"frm-url"} Subir archivo
+            %input#fileinput.main-input{:name => "file", :placeholder => "Subir archivo", :type => "file", :required=>"required"}
 
           .frm-row.actions-bar
-            %input.btn{:type => "reset", :value => "Reset"}
-            %input.btn.close{:type => "button", :value => "Apagar"}
-            %input.btn.primary{:type => "submit", :value => "Vamos"}
+            /
+              %input.btn{:type => "reset", :value => "Reset"}
+              %input.btn.close{:type => "button", :value => "Apagar"}
+            %input.btn.primary{:type => "submit", :value => "Arriba"}
 
     %section#step-2.main
 
-    %script{"data-main" => "js/qas", :src => "js/libs/requirejs-min.js", :type => "text/javascript"}
+    %script{"data-main" => "js/qaw-server", :src => "js/libs/requirejs-min.js", :type => "text/javascript"}

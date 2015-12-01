@@ -5,7 +5,7 @@
     <title>QA WALL</title>
     <link href='images/favicon.ico' rel='shortcut icon'>
     <link href='css/normalize.css' rel='stylesheet' type='text/css'>
-    <link href='css/qaserver.css' rel='stylesheet' type='text/css'>
+    <link href='css/qaw-server.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <section class='main' id='step-1'>
@@ -14,21 +14,23 @@
           <div class='logo logo-small'>QA Wall</div>
         </div>
       </header>
-      <form class='main-form' id='main-form' method='post'>
+      <form action='api/upload' class='main-form' enctype='multipart/form-data' id='main-form' method='post'>
         <fieldset class='wrapper'>
           <div class='frm-row'>
-            <label for='frm-url'>Ingresar URL</label>
-            <input class='main-input' id='frm-url' name='url' placeholder='Ingresar URL' required='required' type='url'>
+            <label for='frm-url'>Subir archivo</label>
+            <input class='main-input' id='fileinput' name='file' placeholder='Subir archivo' required='required' type='file'>
           </div>
           <div class='frm-row actions-bar'>
-            <input class='btn' type='reset' value='Reset'>
-            <input class='btn close' type='button' value='Apagar'>
-            <input class='btn primary' type='submit' value='Vamos'>
+            <!--
+              <input class='btn' type='reset' value='Reset'>
+              <input class='btn close' type='button' value='Apagar'>
+            -->
+            <input class='btn primary' type='submit' value='Arriba'>
           </div>
         </fieldset>
       </form>
     </section>
     <section class='main' id='step-2'></section>
-    <script data-main='js/qas' src='js/libs/requirejs-min.js' type='text/javascript'></script>
+    <script data-main='js/qaw-server' src='js/libs/requirejs-min.js' type='text/javascript'></script>
   </body>
 </html>

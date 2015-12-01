@@ -4,53 +4,33 @@
 
 define(function (require) {
 
-  var $ = require('jquery'),
-      rickshaw = require('rickshaw');
-      pub = require('rickshawPubNub.Fixtures.PubNub'),
-      pub = new pub();
+  var $ = require('jquery');
 
   $(document).ready(function () {
 
-    var chocoWall = require('cw');
-
-    $( "#main-form" ).on( "submit", function( event ) {
-      chocoWall.submit(event, $(this));
-    }).find('.close').on('click', function (event) {
-      chocoWall.close(event);
-    });;
-
-
-    $( "#again").on('click', function (event) {
-      chocoWall.changeScreen('#step-1', function(){
-        chocoWall.reset();
+    $('#fileinput').on('change', function(){
+      var ajax = $.ajax({
+        type: 'POST',
+        cache: false,
+        contentType: false,
+        processData: false
       });
+
+      /*
+      for(var i = 0; i<this.files.length; i++){
+        var file =  this.files[i];
+        // This code is only for demo ...
+        console.group("File "+i);
+        console.log("name : " + file.name);
+        console.log("size : " + file.size);
+        console.log("type : " + file.type);
+        console.log("date : " + file.lastModified);
+        console.groupEnd();
+      }
+      */
     });
 
-    $( "#report").on('click', function (event) {
-      chocoWall.report($(this));
-    });
-
-    var graph = new Rickshaw.Graph( {
-      element: document.getElementById("chart"),
-      width: 900,
-      height: 500,
-      renderer: 'area',
-      stroke: true,
-      preserve: true,
-      series: [
-        {
-          color: 'steelblue',
-          name: 'Cats',
-          data: []
-        },
-        {
-          color: 'lightblue',
-          name: 'Dogs',
-          data: []
-        }
-      ]
-    });
-    graph.render();
+    //document.getElementById('fileinput').addEventListener(, false);
 
   });
 
