@@ -1,0 +1,38 @@
+:ruby
+  load 'config.rb'
+
+!!!
+%html
+  %head{:lang => "es"}
+    %meta{:charset => "UTF-8"}
+    %title QA WALL
+    %link{:href => "images/favicon.ico", :rel => "shortcut icon"}
+
+    - if (get_enviroment() == 'dev')
+      %link{:href => "css/normalize.css", :rel => "stylesheet", :type => "text/css"}
+      %link{:href => "css/qaserver.css", :rel => "stylesheet", :type => "text/css"}
+    - else
+      %link{:href => "css/qaserver-min.css", :rel => "stylesheet", :type => "text/css"}
+
+  %body
+
+    %section#step-1.main
+      %header.header-sticky
+        .wrapper
+          .logo.logo-small QA Wall
+
+      %form#main-form.main-form{:method => "post"}
+
+        %fieldset.wrapper
+          .frm-row
+            %label{:for=>"frm-url"} Ingresar URL
+            %input#frm-url.main-input{:name => "url", :placeholder => "Ingresar URL", :type => "url", :required=>"required"}
+
+          .frm-row.actions-bar
+            %input.btn{:type => "reset", :value => "Reset"}
+            %input.btn.close{:type => "button", :value => "Apagar"}
+            %input.btn.primary{:type => "submit", :value => "Vamos"}
+
+    %section#step-2.main
+
+    %script{"data-main" => "js/qas", :src => "js/libs/requirejs-min.js", :type => "text/javascript"}

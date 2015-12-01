@@ -1,4 +1,5 @@
-var app = require('express')(),
+var express = require('express'),
+    app = express(),
     server = require('http').Server(app),
     io = require('socket.io')(server),
     WebPageTest = require('webpagetest'),
@@ -9,6 +10,8 @@ var app = require('express')(),
       client_secret: "0404717faef381a7d60ad7a0d3aca3ffedbf5373"
     });
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
+
+app.use(express.static('public'));
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
