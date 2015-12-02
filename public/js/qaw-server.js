@@ -16,18 +16,12 @@ requirejs.config({
         d3layout: 'libs/d3.layout',
         odometer: 'libs/odometer.min',
         qrcode: 'libs/qrcode.min',
-        Rickshaw: 'libs/rickshaw',
         bargraph: 'libs/bargraph',
         //Modules
         waterfall: 'modules/waterfall',
         wpt: 'modules/wpt',
         cw: 'modules/choco-wall',
         am: 'modules/app-mesagges'
-
-        //Modules
-
-        //Plugins
-
     },
     shim: {
         io: {

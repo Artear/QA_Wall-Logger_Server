@@ -18,8 +18,15 @@ body {
 
 .main {
   text-align: center;
-  background: #637077; }
+  background: #637077;
+  display: none; }
   .main.active {
+    display: block; }
+
+.main-config {
+  text-align: center;
+  background: #637077; }
+  .main-config.active {
     display: block; }
 
 .logo {
@@ -202,7 +209,6 @@ body {
   right: 0; }
 
 .header-sticky {
-  position: fixed;
   top: 0;
   width: 100%;
   height: 2.08333em;

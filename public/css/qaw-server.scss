@@ -22,9 +22,18 @@ body {
 .main {
   text-align: center;
   background: #637077;
+  display:none;
 
   &.active {
-    display: block;
+    display:block;
+  }
+}
+
+.main-config {
+  text-align: center;
+  background: #637077;
+  &.active {
+    display:block;
   }
 }
 
@@ -292,7 +301,6 @@ body {
 }
 
 .header-sticky {
-  position: fixed;
   top: 0;
   width: 100%;
   height: (50em/24);
