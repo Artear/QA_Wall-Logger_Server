@@ -12,7 +12,7 @@ var express = require('express'),
     });
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
 
-app.use(express.static('public'));
+app.use(express.static('public')).listen(8080);
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
@@ -20,13 +20,6 @@ exec('ls', {silent:true}, function(code, output) {
   console.log('Exit code:', code);
   console.log('Program output:', output);
 });
-
-/**
- * Setup Static Server
- */
-var connect = require('connect');
-var serveStatic = require('serve-static');
-connect().use(serveStatic(CONFIG.static_dir)).listen(CONFIG.static_port);
 
 /**
  * globals
