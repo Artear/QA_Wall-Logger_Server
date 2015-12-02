@@ -1,6 +1,6 @@
 var express = require('express'),
     app = express(),
-    CONFIG = require("./config.js");
+    CONFIG = require("./config.js"),
     server = require('http').Server(app),
     io = require('socket.io')(server),
     WebPageTest = require('webpagetest'),
