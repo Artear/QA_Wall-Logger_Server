@@ -1,3 +1,6 @@
+var CONFIG = require("./config.js");
+
+
 var app = require('express')(),
     server = require('http').Server(app),
     io = require('socket.io')(server),
@@ -9,6 +12,13 @@ var app = require('express')(),
       client_secret: "0404717faef381a7d60ad7a0d3aca3ffedbf5373"
     });
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
+
+/**
+ * Setup Static Server
+ */
+var connect = require('connect');
+var serveStatic = require('serve-static');
+connect().use(serveStatic(CONFIG.static_dir)).listen(CONFIG.static_port);
 
 /**
  * globals
