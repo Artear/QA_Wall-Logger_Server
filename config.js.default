@@ -1,0 +1,6 @@
+var config = {};
+
+config.static_dir = "dir_where_visualization_is_hosted";//Static Server doc_root
+config.static_port = 0;//Static Server port
+
+module.exports = config;

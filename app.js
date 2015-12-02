@@ -1,5 +1,6 @@
 var express = require('express'),
     app = express(),
+    CONFIG = require("./config.js");
     server = require('http').Server(app),
     io = require('socket.io')(server),
     WebPageTest = require('webpagetest'),
@@ -19,6 +20,13 @@ exec('ls', {silent:true}, function(code, output) {
   console.log('Exit code:', code);
   console.log('Program output:', output);
 });
+
+/**
+ * Setup Static Server
+ */
+var connect = require('connect');
+var serveStatic = require('serve-static');
+connect().use(serveStatic(CONFIG.static_dir)).listen(CONFIG.static_port);
 
 /**
  * globals
