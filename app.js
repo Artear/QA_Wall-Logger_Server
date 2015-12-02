@@ -12,7 +12,7 @@ var express = require('express'),
     });
 bitly.setAccessToken('b8e564b879029ff16c9c08f3b212affbb60f7ec7');
 
-app.use(express.static('public')).listen(8080);
+app.use(express.static(CONFIG.static_dir)).listen(CONFIG.static_port);
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
