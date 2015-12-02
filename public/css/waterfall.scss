@@ -1,0 +1,67 @@
+.waterfall {
+
+  line-height: 1em;
+
+
+  .zebra {
+    rect {
+      &:nth-child(odd){
+        fill: white
+      }
+      &:nth-child(even){
+        fill: #bbb
+      }
+    }
+  }
+
+  .vertical-lines {
+    line {
+      stroke: #aaa;
+
+      &:first-child {
+        stroke:black;
+      }
+    }
+  }
+
+  .breakpoints {
+    line {
+      stroke: red;
+    }
+  }
+
+  .bar {
+    line-height: 1em;
+  }
+
+  .mime-image {
+    fill:#FBB03B;
+  }
+
+  .mime-html {
+    fill:#00A99D;
+  }
+
+  .mime-css {
+    fill:#29ABE2;
+  }
+
+  .mime-js {
+    fill:#B43E97;
+  }
+
+  .mime-font {
+    fill:#E56354;
+  }
+
+  .mime-other {
+    fill:#a0a0a0;
+  }
+
+  /*
+  .text,
+  .item-bar{
+    height: (30em/16);
+  }
+  */
+}

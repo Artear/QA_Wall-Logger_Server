@@ -4,34 +4,43 @@
 
 define(function (require) {
 
-  var $ = require('jquery');
+    var $ = require('jquery');
 
-  $(document).ready(function () {
+    $(document).ready(function () {
 
-    $('#fileinput').on('change', function(){
-      var ajax = $.ajax({
-        type: 'POST',
-        cache: false,
-        contentType: false,
-        processData: false
-      });
+        $('#fileinput').on('change', function () {
+            var ajax = $.ajax({
+                type: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
 
-      /*
-      for(var i = 0; i<this.files.length; i++){
-        var file =  this.files[i];
-        // This code is only for demo ...
-        console.group("File "+i);
-        console.log("name : " + file.name);
-        console.log("size : " + file.size);
-        console.log("type : " + file.type);
-        console.log("date : " + file.lastModified);
-        console.groupEnd();
-      }
-      */
+        /*if ($("#chart").length > 0) {
+            console.log("paso");
+            var mesagges = require('am');
+
+        } else */{
+            console.log("no paso");
+            $("#main-form").on("submit", function (event) {
+                chocoWall.submit(event, $(this));
+            }).find('.close').on('click', function (event) {
+                chocoWall.close(event);
+            });
+
+
+            $("#again").on('click', function (event) {
+                chocoWall.changeScreen('#step-1', function () {
+                    chocoWall.reset();
+                });
+            });
+
+            $("#report").on('click', function (event) {
+                chocoWall.report($(this));
+            });
+
+        }
     });
-
-    //document.getElementById('fileinput').addEventListener(, false);
-
-  });
 
 });

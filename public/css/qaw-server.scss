@@ -23,15 +23,14 @@ body {
   text-align: center;
   background: #637077;
 
-
   &.active {
-    display:block;
+    display: block;
   }
 }
 
 .logo {
   text-indent: -9999px;
-  position:relative;
+  position: relative;
   overflow: hidden;
   background: transparent url(../images/logo.svg) no-repeat 0 0;
 }
@@ -50,19 +49,18 @@ body {
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  left:0;
+  left: 0;
 }
 
 .main-form {
   padding: 1em 0;
   background: #637077;
 
-
   fieldset {
   }
 
   label {
-    display:none;
+    display: none;
     visibility: hidden;
   }
 
@@ -75,14 +73,14 @@ body {
 
   select {
     background: none;
-    border-color:#a1a9ad;
+    border-color: #a1a9ad;
     border-style: solid;
   }
 
   .frm-row {
     margin-top: .5em;
 
-    &:first-child{
+    &:first-child {
       margin: 0;
     }
   }
@@ -113,11 +111,10 @@ body {
     width: 32%;
     margin-left: 2%;
     display: block;
-    float:left;
+    float: left;
     padding: 0;
 
-
-    &:first-child{
+    &:first-child {
       margin-left: 0;
     }
   }
@@ -138,7 +135,7 @@ body {
   cursor: pointer;
   -webkit-transition: all .5s;
   transition: all .5s;
-  padding:0;
+  padding: 0;
 
   &:hover {
     color: rgba(255, 255, 255, .5);
@@ -160,20 +157,127 @@ body {
   position: relative;
 }
 
+#stats {
+  margin-top: (10em/24);
 
+  .block:first-child {
+    margin-top: 0;
+  }
+}
+
+#wpt {
+  min-height: (475em/24);
+}
+
+#pagespeed {
+  height: (100em/24);
+
+  .psi-element {
+    width: 49%;
+    float: left;
+    color: white;
+    position: relative;
+    height: 100%;
+    line-height: (120em/60);
+    font-size: (60em/24);
+    overflow: hidden;
+
+    &:last-child {
+      margin-left: 2%;
+    }
+
+    //Titulo
+    &:before {
+      text-transform: uppercase;
+      top: 0;
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      left: 0;
+      line-height: 1.2em;
+      height: 1.2em;
+      font-size: (24rem/16);
+      font-weight: bold;
+      z-index: 5;
+    }
+
+    // /100
+    &:after {
+      opacity: .5;
+      content: "/100";
+      margin-left: .1em;
+    }
+  }
+
+  .odometer-inside {
+    display: inline;
+    overflow: hidden;
+    position: relative;
+    top: (-2em/60);
+  }
+
+  .speed {
+    background: #fbb03b;
+
+    &:before {
+      content: "speed";
+      background: #fbb03b;
+    }
+  }
+
+  .ux {
+    background: #8cc63f;
+    &:before {
+      content: "user experience";
+      background: #8cc63f;
+    }
+  }
+}
 
 .loading {
-  background: rgba(#637077,.8);
-  position:absolute;
+  background: rgba(#637077, .8);
+  position: absolute;
   z-index: 9;
   height: 100%;
-  top:0;
+  top: 0;
   width: 100%;
 
   .wrapper {
     $h: (505em/24);
-    height:$h;
+    height: $h;
     margin-top: ($h/-2);
+  }
+}
+
+.qrcodes {
+  $w: (310em/24);
+
+  margin: 0 auto;
+
+  .qrcode-wrapper {
+    float: left;
+    margin-left: 2%;
+    width: 49%;
+    text-align: center;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
+  .qrcode-title {
+  }
+
+  .qrcode-url {
+
+  }
+
+  .qrcode {
+    width: $w;
+    height: $w;
+    background: white;
+    margin: 1em auto;
+    padding: 1em;
   }
 }
 
@@ -181,17 +285,15 @@ body {
 #loading {
   .wrapper {
     position: absolute;
-    top:50%;
+    top: 50%;
     left: 0;
     right: 0;
   }
 }
 
-
-
 .header-sticky {
   position: fixed;
-  top:0;
+  top: 0;
   width: 100%;
   height: (50em/24);
   background: #32383c;
@@ -211,19 +313,21 @@ body {
     margin-left: 1em;
   }
 
-
   .again {
     border-bottom-color: #4a5459;
     background: #637077;
   }
 }
 
-
 #step-1 {
   position: absolute;
   width: 100%;
   background: none;
 
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 #step-2 {
@@ -273,7 +377,59 @@ body {
   }
 }
 
-#waterfall{
+.app-mesagges {
+  background: white;
+}
+
+#chart {
+  position: relative;
+  left: 40px;
+  top: 15px;
+}
+
+#chart_container {
+  left: 15px;
+}
+
+#y_axis {
+  position: absolute;
+  top: 15px;
+  bottom: 0;
+  width: 40px;
+}
+
+.x_tick {
+  color: black;
+}
+
+.buttonEvent {
+  position: absolute;
+  background: #345678;
+}
+
+#new_event {
+  left: 50px;
+  top: 400px;
+}
+
+#remove_event {
+  left: 220px;
+  top: 400px;
+}
+
+#stop_event {
+  left: 450px;
+  top: 400px;
+}
+
+#inputDiv {
+  position: absolute;
+  color: #000000;
+  left: 50px;
+  top: 450px;
+}
+
+#waterfall {
   font-size: (16em/24);
 }
 
@@ -284,12 +440,12 @@ body {
   left: 0;
   top: 0;
   z-index: 99;
-  background: rgba(#637077,.8);
+  background: rgba(#637077, .8);
   display: none;
 
   .wrapper {
     $h: (475em/24);
-    height:$h;
+    height: $h;
     margin-top: ($h/-2);
 
     background: white;
@@ -313,11 +469,11 @@ body {
     cursor: pointer;
 
     &:before {
-      content:"X";
+      content: "X";
       display: block;
       width: 100%;
       height: 100%;
-      color:black;
+      color: black;
       font-size: .7em;
       font-weight: bold;
     }
@@ -330,6 +486,6 @@ body {
   .qrcode-title,
   .qrcode-url {
     text-decoration: none;
-    color:black;
+    color: black;
   }
 }
