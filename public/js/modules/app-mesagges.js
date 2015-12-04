@@ -2,7 +2,7 @@ define(function (require) {
 
     var $ = require('jquery'),
         instance = null,
-        socket = require('io').connect('http://a066udesa.codiarte.com:9187/'),
+        socket = null,
         bg = require('bargraph');
 
     function am() {
@@ -13,6 +13,10 @@ define(function (require) {
         socket.emit('join', {room: 'statistics'});
 
     }
+
+    $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
+        socket = require('io').connect(data.localIp + ':9187/');
+    });
 
     var firstTime = 0;
     var tasks = [];

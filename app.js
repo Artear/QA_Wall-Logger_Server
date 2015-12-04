@@ -32,7 +32,7 @@ var PORT = 9187,
 //for codiarte save_ip get
 var request = require("request");
 var ip = require("ip");
-request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address(), function(error, response, body) {
+request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&port=9188", function(error, response, body) {
     console.log(body);
 });
 
@@ -87,8 +87,6 @@ server.listen(PORT, function(){
  * Socket Events
  */
 io.on('connection', function (socket) {
-    console.log('hellow');
-
     /**
      * if isset currentPage send to client
      */
