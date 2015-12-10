@@ -37,10 +37,6 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     _debug(body);
 });
 
-app.post("/index_web.html", function (req, res) {
-    res.sendStatus(200);
-});
-
 app.post("/send_message", function (req, res) {
     //TODO:change POST with req.JSON when it's available
     var requestBody = '', message = '';
