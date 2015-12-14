@@ -349,3 +349,12 @@ body {
     color: black; }
 
 /*# sourceMappingURL=qaw-server.css.map */
+
+#contentButton{
+  margin-left: 50px;
+  margin-top: 200px;
+
+}
+.buttonAux{
+background: #345678;
+}
