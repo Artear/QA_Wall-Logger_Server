@@ -18,7 +18,8 @@
     "request": "^2.67.0",
     "shelljs": "^0.5.3",
     "socket.io": "~1.3.6",
-    "webpagetest": "^0.3.3"
+    "webpagetest": "^0.3.3",
+    "cors": "~2.7.1"
   },
   "description": "ERROR: No README data found!",
   "main": "app.js",
