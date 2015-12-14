@@ -40,7 +40,7 @@ var DEBUG = false,
     currentPage = {};
 
 //for codiarte save_ip get
-request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&port=" + CONFIG.static_port, function (error, response, body) {
+request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&port=" + CONFIG.socket_port, function (error, response, body) {
     _debug(body);
 });
 
