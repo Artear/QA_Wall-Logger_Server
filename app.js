@@ -1,5 +1,6 @@
 var CONFIG = require("./config.js");
 var express = require('express');
+var cors = require('cors');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
@@ -14,6 +15,12 @@ var bitly = new bitlyAPI({
 });
 
 bitly.setAccessToken(CONFIG.bitly_access_token);
+
+/**
+ * CORS Policy definition (Cross-Domain)
+ */
+app.use(cors());
+
 
 app.use(express.static(CONFIG.static_dir)).listen(CONFIG.static_port, function () {
     console.log("Serving HTTP from " + CONFIG.static_dir + ":" + CONFIG.static_port);
@@ -37,18 +44,8 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     _debug(body);
 });
 
-/**
- * CORS Policy definition (Cross-Domain)
- */
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
-
-app.post("/send_message", function (req, res) {
+app.post("/send_message", function (req, res, next) {
     //TODO:change POST with req.JSON when it's available
     var requestBody = '', message = '';
 

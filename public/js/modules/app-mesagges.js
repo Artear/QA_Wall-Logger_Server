@@ -15,7 +15,7 @@ define(function (require) {
     }
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':9187/');
+        socket = require('io').connect(data.localIp + ':' + data.port +'/');
     });
 
     var firstTime = 0;
