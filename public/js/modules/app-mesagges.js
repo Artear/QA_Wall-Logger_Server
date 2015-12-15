@@ -10,12 +10,14 @@ define(function (require) {
             throw new Error("Cannot instantiate more than one am");
         }
 
-        socket.emit('join', {room: 'statistics'});
+
 
     }
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
         socket = require('io').connect(data.localIp + ':' + data.port +'/');
+        socket.on('log', processEvent);
+        socket.emit('join', {room: 'statistics'});
     });
 
     var firstTime = 0;
@@ -126,7 +128,7 @@ define(function (require) {
         chart.render();
     }
 
-    socket.on('log', processEvent);
+
 
 /** DEBUG Msgs
     tasks.push({x: -1, y: [0, 1], label: "data.message", deviceId: "data.deviceId", id: "data.id", end: false});

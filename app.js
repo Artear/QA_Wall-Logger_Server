@@ -36,12 +36,12 @@ exec('ls', {silent: true}, function (code, output) {
 /**
  * globals
  */
-var DEBUG = false,
+var DEBUG = true,
     currentPage = {};
 
 //for codiarte save_ip get
-request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&port=" + CONFIG.static_port, function (error, response, body) {
-    _debug(body);
+request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&message_port=" + CONFIG.static_port+ "&socket_port=" + CONFIG.socket_port, function (error, response, body) {
+    _debug('Codiarte Response:' + body);
 });
 
 
