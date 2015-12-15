@@ -10,13 +10,13 @@ define(function (require) {
             throw new Error("Cannot instantiate more than one am");
         }
 
-//        socket.emit('join', {room: 'statistics'});
+        socket.emit('join', {room: 'statistics'});
 
     }
 
-//    $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-//        socket = require('io').connect(data.localIp + ':' + data.port +'/');
-//    });
+    $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
+        socket = require('io').connect(data.localIp + ':' + data.port +'/');
+    });
 
     var firstTime = 0;
     var tasks = [];
@@ -26,7 +26,7 @@ define(function (require) {
     var vpMin = 0;
     var vpMax = 10;
 
-    var live = false;
+    var live = true;//false; DEBUG
     var controlMovement = false;
     var addEventAuxVar = 5;
 
@@ -126,13 +126,14 @@ define(function (require) {
         chart.render();
     }
 
-//    socket.on('log', processEvent);
+    socket.on('log', processEvent);
 
+/** DEBUG Msgs
     tasks.push({x: -1, y: [0, 1], label: "data.message", deviceId: "data.deviceId", id: "data.id", end: false});
     tasks.push({x: -2, y: [0.5, 3.1], label: "data.message2", deviceId: "data.deviceId2", id: "data.id2", end: false});
     tasks.push({x: -3, y: [2, 2.8], label: "data.message3", deviceId: "data.deviceId3", id: "data.id3", end: false});
     tasks.push({x: -4, y: [3, 3.1], label: "data.message4", deviceId: "data.deviceId4", id: "data.id4", end: false});
-
+/***/
     chart.render();
 
     function timerChart(){
@@ -174,7 +175,7 @@ define(function (require) {
         return (event1.y[1] - event1.y[0]) - (event2.y[1] - event2.y[0]);
     }
 
-
+/** DEBUG Msgs
     var buttonLive = document.getElementById("buttonLive");
     buttonLive.addEventListener("click", function() {
                  live = !live;
@@ -195,7 +196,7 @@ define(function (require) {
                     processEvent(data);
 
                  }, false);
-
+**/
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
