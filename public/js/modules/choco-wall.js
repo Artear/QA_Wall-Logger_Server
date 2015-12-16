@@ -34,8 +34,43 @@ define(function (require) {
             $loading = $($("#wpt-loading").html().trim()),
             $wpts = $("#wpt-summary").html().trim();
 
+
         $.getJSON("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function (data) {
-            socket = require('io').connect(data.localIp + ':' + data.port);
+            socket = require('io').connect(data.localIp + ':' + data.socket_port + '/');
+        }).done(function () {
+            socket.emit('join', {room: 'statistics'});
+
+            socket.on('log', function (data) {
+                console.log('log me dicen esto faaa >', data);
+            });
+
+            socket.on('wpt', function (data) {
+                console.log('WPT me dicen esto', data);
+                url = data.jsonUrl;
+                interval = setInterval(function () {
+                    wptcheck(url)
+                }, 1000);
+            });
+
+            socket.on('bitly.wpt', function (url) {
+                console.log('debo mostrar bitly', url)
+                urls.wpt = url;
+
+                showQr({
+                    el: '#qrcode-wpt',
+                    text: urls.wpt
+                });
+            });
+
+            socket.on('bitly.psi', function (url) {
+                urls.psi = url;
+
+                showQr({
+                    el: '#qrcode-psi',
+                    text: urls.psi
+                });
+
+            });
         });
 
 
@@ -50,9 +85,6 @@ define(function (require) {
          * @alias module:Wpt
          */
         function Cw() {
-            if (instance !== null) {
-                throw new Error("Cannot instantiate more than one Choco-wall");
-            }
 
             socket.emit('join', {room: 'statistics'});
 
@@ -172,40 +204,7 @@ define(function (require) {
             $qrcode.find('a').attr('title', $qrcode.find('.qrcode-title').html())
                 .attr('href', opts.text)
                 .text(opts.text);
-
         }
-
-        socket.on('log', function (data) {
-            console.log('log me dicen esto faaa >', data);
-        });
-
-        socket.on('wpt', function (data) {
-            console.log('WPT me dicen esto', data);
-            url = data.jsonUrl;
-            interval = setInterval(function () {
-                wptcheck(url)
-            }, 1000);
-        });
-
-        socket.on('bitly.wpt', function (url) {
-            console.log('debo mostrar bitly', url)
-            urls.wpt = url;
-
-            showQr({
-                el: '#qrcode-wpt',
-                text: urls.wpt
-            });
-        });
-
-        socket.on('bitly.psi', function (url) {
-            urls.psi = url;
-
-            showQr({
-                el: '#qrcode-psi',
-                text: urls.psi
-            });
-
-        });
 
         /**
          *

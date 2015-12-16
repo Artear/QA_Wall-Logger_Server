@@ -39,7 +39,7 @@ exec('ls', {silent: true}, function (code, output) {
 var DEBUG = true,
     currentPage = {};
 
-//for codiarte save_ip get
+//Save ip on Remote, so any client can look where to connect;
 request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&message_port=" + CONFIG.static_port+ "&socket_port=" + CONFIG.socket_port, function (error, response, body) {
     _debug('Codiarte Response:' + body);
 });
