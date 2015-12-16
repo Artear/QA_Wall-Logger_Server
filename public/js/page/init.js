@@ -4,26 +4,27 @@
 
 define(function (require) {
 
-  var $ = require('jquery');
+    var $ = require('jquery');
+    var cw = require('cw');
 
-  $(document).ready(function () {
+    $(document).ready(function () {
 
-      $( "#main-form" ).on( "submit", function( event ) {
-        chocoWall.submit(event, $(this));
-      }).find('.close').on('click', function (event) {
-        chocoWall.close(event);
-      });
-
-
-      $( "#again").on('click', function (event) {
-        chocoWall.changeScreen('#step-1', function(){
-          chocoWall.reset();
+        $("#main-form").on("submit", function (event) {
+            cw.submit(event, $(this));
+        }).find('.close').on('click', function (event) {
+            cw.close(event);
         });
-      });
 
-      $( "#report").on('click', function (event) {
-        chocoWall.report($(this));
-      });
 
-  });
+        $("#again").on('click', function (event) {
+            cw.changeScreen('#step-1', function () {
+                cw.reset();
+            });
+        });
+
+        $("#report").on('click', function (event) {
+            cw.report($(this));
+        });
+
+    });
 });

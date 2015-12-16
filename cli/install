@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import os
+import threading
+import sys
+
+from lib import CMDUtils
+from lib import ADBUtils
+
+
+# ------------------------------------------- ARG PARSE -----------------------------------------------------#
+
+CMDUtils.clear()
+
+parser = OptionParser()
+parser.add_option("-f", "--file", type="string", dest="file", default="", help="Path-To-APK")
+parser.add_option("-u", "--uninstall", action="store_true", dest="uninstall", default=False, help="Uninstalls the apk before installing")
+parser.add_option("-r", "--run", action="store_true", dest="run", default=False, help="Runs the apk after installing")
+(arguments, args) = parser.parse_args()
+
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    exit(1)
+
+if not os.path.isfile(arguments.file):
+    CMDUtils.print_error("File does not exists: " + arguments.file)
+
+devices = ADBUtils.get_connected_devices()
+
+if len(devices) == 0:
+    CMDUtils.print_error("No devices connected")
+
+
+# ------------------------------------------------------------------------------------------------------#
+# ------------------------------------------- MAIN -----------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------#
+
+
+# List devices
+ADBUtils.pretty_print_devices()
+
+
+# Start
+package = ADBUtils.get_package_from_apk(arguments.file)
+main_activity = package + "/" + ADBUtils.get_launchable_activity(arguments.file)
+
+for device in devices:
+    threading.Thread(target=ADBUtils.install_and_run, args=(device, arguments.file, arguments.uninstall, arguments.run)).start()
