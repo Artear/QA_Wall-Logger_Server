@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import threading
+from urlparse import urlparse
+import sys
+
+from lib import CMDUtils
+from lib import ADBUtils
+
+
+# ------------------------------------------- ARG PARSE -----------------------------------------------------#
+
+CMDUtils.clear()
+
+parser = OptionParser()
+parser.add_option("-u", "--url", type="string", dest="url", default="", help="URL to open, including http/https")
+parser.add_option("-b", "--browser", type="string", dest="browser", default=ADBUtils.BrowserType.BROWSER_ANY,
+                  help="Browser to use.\n Accepted Values: " + ADBUtils.BrowserType.BROWSER_CHROME + ", " + ADBUtils.BrowserType.BROWSER_FIREFOX + ", " + ADBUtils.BrowserType.BROWSER_ANY)
+(arguments, args) = parser.parse_args()
+
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    exit(1)
+
+if not urlparse(arguments.url).scheme:
+    CMDUtils.print_error("Can't parse url: " + arguments.url + ".\nMust have a Scheme (ie: http:// or https://)")
+
+if arguments.browser != ADBUtils.BrowserType.BROWSER_CHROME and arguments.browser != ADBUtils.BrowserType.BROWSER_FIREFOX and arguments.browser != ADBUtils.BrowserType.BROWSER_ANY:
+    CMDUtils.print_error("Unknown Browser: " + arguments.browser)
+
+devices = ADBUtils.get_connected_devices()
+
+if len(devices) == 0:
+    CMDUtils.print_error("No devices connected")
+
+
+# ------------------------------------------------------------------------------------------------------#
+# ------------------------------------------- MAIN -----------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------#
+
+
+# List devices
+ADBUtils.pretty_print_devices()
+
+
+# Start
+for device in devices:
+    threading.Thread(target=ADBUtils.open_url, args=(device, arguments.url, arguments.browser)).start()

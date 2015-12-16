@@ -1,0 +1,29 @@
+#!/usr/bin/python
+import threading
+
+from lib import ADBUtils
+from lib import CMDUtils
+
+
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+
+devices = ADBUtils.get_connected_devices()
+
+if len(devices) == 0:
+    CMDUtils.print_error("No devices connected")
+
+# ------------------------------------------------------------------------------------------------------#
+# ------------------------------------------- MAIN -----------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------#
+
+
+CMDUtils.print_title("Pelase note that some devices (like Samsung ones) might not reset")
+
+# List devices
+ADBUtils.pretty_print_devices()
+
+
+# Start
+for device in devices:
+    threading.Thread(target=ADBUtils.reboot_device, args=(device,)).start()

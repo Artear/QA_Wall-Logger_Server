@@ -1,0 +1,55 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import os
+import threading
+import sys
+
+from lib import CMDUtils
+from lib import ADBUtils
+
+
+# ------------------------------------------- ARG PARSE -----------------------------------------------------#
+
+CMDUtils.clear()
+
+parser = OptionParser()
+parser.add_option("-f", "--file", type="string", dest="file", default="", help="Path-To-APK to extract the package from")
+parser.add_option("-p", "--package-name", type="string", dest="package", default="", help="Package name")
+(arguments, args) = parser.parse_args()
+
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    exit(1)
+
+if arguments.file and arguments.package:
+    CMDUtils.print_error("Can't define both arguments, you should use one or the other")
+
+package = arguments.package
+
+if arguments.file:
+    if not os.path.isfile(arguments.file):
+        CMDUtils.print_error("File does not exists: " + arguments.file)
+    else:
+        package = ADBUtils.get_package_from_apk(arguments.file)
+
+devices = ADBUtils.get_connected_devices()
+
+if len(devices) == 0:
+    CMDUtils.print_error("No devices connected")
+
+
+# ------------------------------------------------------------------------------------------------------#
+# ------------------------------------------- MAIN -----------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------#
+
+
+# List devices
+ADBUtils.pretty_print_devices()
+
+
+# Start
+for device in devices:
+    threading.Thread(target=ADBUtils.clear_user_data, args=(device, package,)).start()
