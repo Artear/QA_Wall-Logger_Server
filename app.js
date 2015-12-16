@@ -13,6 +13,19 @@ var bitly = new bitlyAPI({
     client_id: CONFIG.bitly_id,
     client_secret: CONFIG.bitly_secret
 });
+/* Multer */
+var multer  = require('multer')
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'tmp/api-upload')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + file.originalname)
+  }
+})
+
+var upload = multer({ storage: storage })
+/*--------*/
 
 bitly.setAccessToken(CONFIG.bitly_access_token);
 
@@ -45,14 +58,16 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     _debug('Codiarte Response:' + body);
 });
 
-/*
-app.post("/api/upload", function(req, res) {
-    res.send('POST/GET SERVER');
-    
-    //moviemiento de archivo
-    
+
+app.post("/api/upload", function(req, res, next) {
+    upload.single('file')(req, res, function (err) {
+    if (err) {
+      res.sendStatus(401);
+      return
+    }
+        res.sendStatus(200);
+    })
 });
-*/
 
 app.post("/send_message", function (req, res, next) {
 

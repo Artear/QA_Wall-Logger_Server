@@ -9,7 +9,7 @@ requirejs.config({
     baseUrl: 'js/',
     paths: {
         jquery: 'libs/jquery-2.1.4.min',
-
+        configwall: 'modules/config-wall',
         //Libs
         io: 'libs/socket.io-1.3.6.min'
     },
