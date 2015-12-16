@@ -330,6 +330,7 @@ define(function (require) {
         $('#loading').find('.qrcode img').remove();
     };
 
+
     return (instance = (instance || new Cw()));
 
 });
