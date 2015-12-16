@@ -1,21 +1,14 @@
 define(function (require) {
 
     var $ = require('jquery'),
-        instance = null,
         socket = null,
         bg = require('bargraph');
 
-    function am() {
-        if (instance !== null) {
-            throw new Error("Cannot instantiate more than one am");
-        }
-
-
-
-    }
+    var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
         socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+    }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
     });
@@ -240,6 +233,6 @@ define(function (require) {
 
     setInterval(timerChart, 500);
 
-    return (instance = (instance || new am()));
+    return app;
 
 });
