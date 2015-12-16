@@ -17,6 +17,7 @@ requirejs.config({
         odometer: 'libs/odometer.min',
         qrcode: 'libs/qrcode.min',
         bargraph: 'libs/bargraph',
+
         //Modules
         waterfall: 'modules/waterfall',
         wpt: 'modules/wpt',

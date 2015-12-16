@@ -3,4 +3,4 @@ node_modules/
 .idea
 
 
-config.js
+/config.js
