@@ -29,10 +29,10 @@ define(function (require) {
         height: 500,
 		title:{
 			text: "QA Wall Eventos",
-            fontSize: 20
+            fontSize: 40
 		},
         legend: {
-            fontSize: 10
+            fontSize: 15
         },
 		zoomEnabled: true,
         zoomType: 'xy',
@@ -46,12 +46,12 @@ define(function (require) {
             viewportMaximum: vpMax
         },
 		axisX: {
-			interval:0.5,
+			interval:1,
 			title: "Eventos",
-            labelFontSize: 10,
+            labelFontSize: 15,
             titleFontSize: 20,
-            viewportMinimum: -5,
-            viewportMaximum: 1,
+            viewportMinimum: -4.5,
+            viewportMaximum: 1.5,
             labelFormatter: function ( e ) {
                             if(e.label === null){
                                     return "";
@@ -83,7 +83,7 @@ define(function (require) {
                 taskEvent++;
                 console.log("PERIOD_START: ", data);
                 if(tasks.length == 0) {
-                    tasks.push({x: taskEvent*-0.5,
+                    tasks.push({x: taskEvent*-1,
                                 y: [0, 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
@@ -93,8 +93,8 @@ define(function (require) {
                 } else {
                     var calc =  (data.time - firstTime) / 1000.0;
 
-                    tasks.push({x: taskEvent*-0.5,
-                                y: [calc, calc + 1],
+                    tasks.push({x: taskEvent*-1,
+                                y: [calc, calc + 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
                                 id: data.id,
@@ -116,7 +116,7 @@ define(function (require) {
             case "EVENT":
                 //EVENT
                 var calc =  (data.time-firstTime) / 1000.0;
-                tasks.push({x: 0.5, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
+                tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
                 break;
         }
@@ -171,9 +171,10 @@ define(function (require) {
                 }
 
                 //There are many Start-End Events and need to scroll down.
-                if(cantStartEndEvent > 10){
-                    chart.options.axisX.viewportMinimum = -cantStartEndEvent ;
-                    chart.options.axisX.viewportMaximum = -cantStartEndEvent + 5;
+                if(cantStartEndEvent > (5/1)){
+                    chart.options.axisX.viewportMinimum = -(cantStartEndEvent * 1) ;
+                    chart.options.axisX.viewportMaximum = -(cantStartEndEvent * 1) + 5;
+                    console.log("pasooo", cantStartEndEvent,  cantStartEndEvent * 0.5);
                 }
 
             }
