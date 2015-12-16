@@ -326,6 +326,6 @@ define(function (require) {
         };
     };
 
-    return singleChoco();
+    return new singleChoco();
 
 });
