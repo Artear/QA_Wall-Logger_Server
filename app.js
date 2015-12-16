@@ -16,9 +16,11 @@ app.use(express.static(CONFIG.static_dir)).listen(CONFIG.static_port);
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
-exec('ls', {silent:true}, function(code, output) {
+
+exec('ls ' + filename, {silent:true}, function(code, output) {
     console.log('Exit code:', code);
     console.log('Program output:', output);
+    //socket.emit('fun', output)
 });
 
 /**
@@ -38,6 +40,13 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
 
 app.get("/", function(req, res) {
     res.send('POST/GET SERVER');
+});
+
+app.post("/api/upload", function(req, res) {
+    res.send('POST/GET SERVER');
+    
+    //moviemiento de archivo
+    
 });
 
 app.post("/", function(req, res) {
