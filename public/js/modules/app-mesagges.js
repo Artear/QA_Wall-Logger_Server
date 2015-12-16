@@ -19,7 +19,7 @@ define(function (require) {
     var updateInterval = 10000;
 
     var vpMin = 0;
-    var vpMax = 10;
+    var vpMax = 1;
 
     var live = true;//false; DEBUG
     var controlMovement = false;
@@ -39,22 +39,25 @@ define(function (require) {
 		axisY: {
 			includeZero: false,
 			title: "Tiempo",
-			interval: 1,
+			interval: 0.1,
             labelFontSize: 10,
             titleFontSize: 20,
             viewportMinimum: vpMin,
-            viewportMaximum: vpMax,
-            labelFormatter: function ( e ) {
-                  return e.value;
-            }
+            viewportMaximum: vpMax
         },
 		axisX: {
-			interval:1,
+			interval:0.5,
 			title: "Eventos",
             labelFontSize: 10,
             titleFontSize: 20,
-            viewportMinimum: -4.5,
-            viewportMaximum: 1.5
+            viewportMinimum: -5,
+            viewportMaximum: 1,
+            labelFormatter: function ( e ) {
+                            if(e.label === null){
+                                    return "";
+                            }
+                            return e.label;
+                        }
 		},
         dataPointMaxWidth: 10,
 		data: [
@@ -80,7 +83,7 @@ define(function (require) {
                 taskEvent++;
                 console.log("PERIOD_START: ", data);
                 if(tasks.length == 0) {
-                    tasks.push({x: taskEvent*-1,
+                    tasks.push({x: taskEvent*-0.5,
                                 y: [0, 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
@@ -90,7 +93,7 @@ define(function (require) {
                 } else {
                     var calc =  (data.time - firstTime) / 1000.0;
 
-                    tasks.push({x: taskEvent*-1,
+                    tasks.push({x: taskEvent*-0.5,
                                 y: [calc, calc + 1],
                                 label: data.message,
                                 deviceId: data.deviceId,
@@ -113,7 +116,7 @@ define(function (require) {
             case "EVENT":
                 //EVENT
                 var calc =  (data.time-firstTime) / 1000.0;
-                tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
+                tasks.push({x: 0.5, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
                 break;
         }
@@ -121,14 +124,13 @@ define(function (require) {
         chart.render();
     }
 
-
-
-/** DEBUG Msgs
+    /** DEBUG Msgs
     tasks.push({x: -1, y: [0, 1], label: "data.message", deviceId: "data.deviceId", id: "data.id", end: false});
     tasks.push({x: -2, y: [0.5, 3.1], label: "data.message2", deviceId: "data.deviceId2", id: "data.id2", end: false});
     tasks.push({x: -3, y: [2, 2.8], label: "data.message3", deviceId: "data.deviceId3", id: "data.id3", end: false});
     tasks.push({x: -4, y: [3, 3.1], label: "data.message4", deviceId: "data.deviceId4", id: "data.id4", end: false});
-/***/
+    /***/
+
     chart.render();
 
     function timerChart(){
@@ -136,41 +138,60 @@ define(function (require) {
 
             var event;
             var yAux;
+            var cantStartEndEvent = 0;
 
             for(var i = 0; i< tasks.length; i++){
 
                 event = tasks[i];
 
                 //Is start-end Event? And not finished?
-                if(event.x <= 0 && !event.end){
-                    yAux = tasks[i].y;
-                    yAux[1] = yAux[1] + 0.5;
-                    tasks[i].y = yAux;
+                if(event.x <= 0){
+                    if(!event.end){
+                        yAux = tasks[i].y;
+                        yAux[1] = yAux[1] + 0.1;
+                        tasks[i].y = yAux;
+                    }
+                    cantStartEndEvent++;
                 }
             }
 
             //TODO insert in order desc or asc and prevent this...
             tasks.sort(compareEvents);
-            var largestEvent = tasks[tasks.length - 1];
+            var latestEvent = tasks[tasks.length - 1];
 
-            console.log(largestEvent);
+            if(!controlMovement && !(latestEvent === undefined)){
 
-            if(!controlMovement && !(largestEvent === undefined) && largestEvent.y[1] - largestEvent.y[0] > 10){
-                vpMin = vpMin + 0.5;
-                vpMax = vpMax + 0.5;
-                chart.options.axisY.viewportMinimum = vpMin;
-                chart.options.axisY.viewportMaximum = vpMax;
+                //The latest event not fit on the screen and need to scroll right.
+                if(latestEvent.y[1] > 1){
+                    vpMin = latestEvent.y[1] - 1;
+                    vpMax = latestEvent.y[1];
+
+                    chart.options.axisY.viewportMinimum = vpMin;
+                    chart.options.axisY.viewportMaximum = vpMax;
+                }
+
+                //There are many Start-End Events and need to scroll down.
+                if(cantStartEndEvent > 10){
+                    chart.options.axisX.viewportMinimum = -cantStartEndEvent ;
+                    chart.options.axisX.viewportMaximum = -cantStartEndEvent + 5;
+                }
+
             }
 
             chart.render();
         }
     }
 
+    /**
+    *
+    *Return the last event on graph based axe Y. (Note axe Y is horizontally, and axe X was vertically)
+    *
+    **/
     function compareEvents(event1, event2){
-        return (event1.y[1] - event1.y[0]) - (event2.y[1] - event2.y[0]);
+        return (event1.y[1] - event2.y[1]);
     }
 
-/** DEBUG Msgs
+    /** DEBUG Msgs
     var buttonLive = document.getElementById("buttonLive");
     buttonLive.addEventListener("click", function() {
                  live = !live;
@@ -191,14 +212,14 @@ define(function (require) {
                     processEvent(data);
 
                  }, false);
-**/
+    **/
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
                      //TODO insert in order desc or asc and prevent this...
                      tasks.sort(compareEvents);
-                     var largestEvent = tasks[tasks.length - 1];
-                     var maxValue = largestEvent.y[1];
+                     var latestEvent = tasks[tasks.length - 1];
+                     var maxValue = latestEvent.y[1];
 
                      chart.options.axisY.viewportMinimum = 0;
                      chart.options.axisY.viewportMaximum = maxValue;
@@ -217,11 +238,11 @@ define(function (require) {
                     if(!controlMovement){
                         //TODO insert in order desc or asc and prevent this...
                         tasks.sort(compareEvents);
-                        var largestEvent = tasks[tasks.length - 1];
+                        var latestEvent = tasks[tasks.length - 1];
 
-                        var maxValue = largestEvent.y[1];
+                        var maxValue = latestEvent.y[1];
 
-                        vpMin = maxValue - 10;
+                        vpMin = maxValue - 1;
                         vpMax = maxValue;
 
                         chart.options.axisY.viewportMinimum = vpMin;
