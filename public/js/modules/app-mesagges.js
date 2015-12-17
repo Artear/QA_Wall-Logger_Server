@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+        socket = require('io').connect('192.168.15.60:' + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -27,6 +27,7 @@ define(function (require) {
 
     var chart = new CanvasJS.Chart("chartContainer",{
         height: 500,
+        backgroundColor: "#637077",
 		title:{
 			text: "QA Wall Eventos",
             fontSize: 40
@@ -42,6 +43,8 @@ define(function (require) {
 			interval: 0.1,
             labelFontSize: 10,
             titleFontSize: 20,
+            labelFontColor: "white",
+            titleFontColor: "white",
             viewportMinimum: vpMin,
             viewportMaximum: vpMax
         },
@@ -50,6 +53,8 @@ define(function (require) {
 			title: "Eventos",
             labelFontSize: 15,
             titleFontSize: 20,
+            labelFontColor: "white",
+            titleFontColor: "white",
             viewportMinimum: -4.5,
             viewportMaximum: 1.5,
             labelFormatter: function ( e ) {

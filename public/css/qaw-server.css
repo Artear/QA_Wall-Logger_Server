@@ -259,42 +259,6 @@ body {
     border-left-width: 0.21429em;
     border-right-width: 0.21429em; }
 
-.app-mesagges {
-  background: white; }
-
-#chart {
-  position: relative;
-  left: 40px;
-  top: 15px; }
-
-#chart_container {
-  left: 15px; }
-
-#y_axis {
-  position: absolute;
-  top: 15px;
-  bottom: 0;
-  width: 40px; }
-
-.x_tick {
-  color: black; }
-
-.buttonEvent {
-  position: absolute;
-  background: #345678; }
-
-#new_event {
-  left: 50px;
-  top: 400px; }
-
-#remove_event {
-  left: 220px;
-  top: 400px; }
-
-#stop_event {
-  left: 450px;
-  top: 400px; }
-
 #inputDiv {
   position: absolute;
   color: #000000;
@@ -350,11 +314,47 @@ body {
 
 /*# sourceMappingURL=qaw-server.css.map */
 
+
 #contentButton{
   margin-left: 50px;
-  margin-top: 200px;
+  horizontal-align: right;
+  float:right;
+  display: block;
+  margin-right: 25px;
 
 }
 .buttonAux{
-background: #345678;
+    background: #345678;
 }
+
+#buttonZoomIn{
+     font-size: 1.25em;
+
+}
+
+#buttonZoomOut{
+     font-size: 1.25em;
+}
+
+.actions-bar-zoom {
+  margin: .5em }
+  .actions-bar-zoom input {
+    width: 48%;
+    margin-left: 4%;
+    display: block;
+    float: left;
+    padding: 0; }
+    .actions-bar-zoom input:first-child {
+      margin-left: 0; }
+
+.actions-bar-buttons {
+  margin: .5em;
+  margin-top: 2cm;}
+  .actions-bar-buttons input {
+    width: 48%;
+    display: block;
+    margin-left: 4%;
+    float: left;
+    padding: 0; }
+    .actions-bar-buttons input:first-child {
+      margin-left: 0; }
