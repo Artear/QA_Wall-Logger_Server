@@ -316,6 +316,7 @@ body {
 
 
 #contentButton{
+  width: 200px;
   margin-left: 50px;
   horizontal-align: right;
   float:right;
@@ -334,6 +335,10 @@ body {
 
 #buttonZoomOut{
      font-size: 1.25em;
+}
+
+#buttonControlMovement{
+    text-align:center;
 }
 
 .actions-bar-zoom {

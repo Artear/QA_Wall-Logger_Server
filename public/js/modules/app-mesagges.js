@@ -13,12 +13,15 @@ define(function (require) {
         socket.emit('join', {room: 'statistics'});
     });
 
+    /** Config **/
     var colorChartFont = "white";
+    var titleAxisFontSize = 20;
+    /** ===== **/
 
     var firstTime = 0;
     var tasks = [];
     var taskEvent = -1;
-    var updateInterval = 10000;
+    var updateInterval = 500;//Milliseconds
 
     var vpMin = 0;
     var vpMax = 1;
@@ -41,17 +44,17 @@ define(function (require) {
 			title: "Tiempo",
 			interval: 0.1,
             labelFontSize: 10,
-            titleFontSize: 20,
+            titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
             viewportMinimum: vpMin,
             viewportMaximum: vpMax
         },
 		axisX: {
-			interval:1,
+			interval: 1,
 			title: "Eventos",
             labelFontSize: 15,
-            titleFontSize: 20,
+            titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
             viewportMinimum: -4.5,
@@ -240,6 +243,12 @@ define(function (require) {
 
                     controlMovement = !controlMovement;
 
+                    if(controlMovement){
+                        buttonControlMovement.value = "MOVE OFF";
+                    }else{
+                        buttonControlMovement.value = "MOVE ON";
+                    }
+
                     if(!controlMovement){
                         //TODO insert in order desc or asc and prevent this...
                         tasks.sort(compareEvents);
@@ -247,17 +256,23 @@ define(function (require) {
 
                         var maxValue = latestEvent.y[1];
 
-                        vpMin = maxValue - 1;
+                        vpMin = maxValue - 1 < 0 ? 0 : maxValue - 1;
                         vpMax = maxValue;
 
                         chart.options.axisY.viewportMinimum = vpMin;
                         chart.options.axisY.viewportMaximum = vpMax;
+
+                        console.log("viewportMinimum", vpMin);
+                        console.log("viewportMaximum", vpMax);
+
+                        //Fix refresh graph if no new content data
+                        tasks[tasks.length - 1].y[1] = tasks[tasks.length - 1].y[1] + 0.0001;
                         chart.render();
                     }
 
                  }, false);
 
-    setInterval(timerChart, 500);
+    setInterval(timerChart, updateInterval);
 
     return app;
 
