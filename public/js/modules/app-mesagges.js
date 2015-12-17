@@ -240,7 +240,6 @@ define(function (require) {
     var buttonControlMovement = document.getElementById("buttonControlMovement");
     buttonControlMovement.addEventListener("click", function() {
 
-
                     controlMovement = !controlMovement;
 
                     if(controlMovement){
@@ -271,6 +270,34 @@ define(function (require) {
                     }
 
                  }, false);
+
+    var buttonZoomIn = document.getElementById("buttonZoomIn");
+    buttonZoomIn.addEventListener("click", function() {
+
+        if(chart.options.axisY.interval >= 0.1){
+
+            chart.options.axisY.interval = chart.options.axisY.interval * 2;
+            chart.options.axisY.viewportMinimum = vpMin;
+            chart.options.axisY.viewportMaximum = vpMax;
+            chart.render();
+            console.log(chart);
+        }
+
+    }, false);
+
+    var buttonZoomOut = document.getElementById("buttonZoomOut");
+        buttonZoomOut.addEventListener("click", function() {
+
+
+        if(chart.options.axisY.interval >= 0.5){
+            chart.options.axisY.interval = chart.options.axisY.interval / 2;
+            chart.options.axisY.viewportMinimum = vpMin;
+            chart.options.axisY.viewportMaximum = vpMax;
+            chart.render();
+        }
+
+    }, false);
+
 
     setInterval(timerChart, updateInterval);
 
