@@ -363,3 +363,12 @@ body {
     padding: 0; }
     .actions-bar-buttons input:first-child {
       margin-left: 0; }
+
+#selectDevice {
+    margin-left: 50px;
+    box-sizing: border-box;
+    padding: .5em;
+    background: none;
+    border-color: #a1a9ad;
+    border-style: solid;
+}

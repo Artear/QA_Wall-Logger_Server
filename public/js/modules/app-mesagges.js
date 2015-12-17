@@ -30,6 +30,14 @@ define(function (require) {
     var controlMovement = false;
     var addEventAuxVar = 5;
 
+    var devices = [];
+    var currentDeviceId;
+    var select = document.getElementById('selectDevice');
+    select.onselect=function(){
+        currentDeviceId = $(this).val();
+        renderChart();
+    };
+
     var chart = new CanvasJS.Chart("chartContainer",{
         height: 600,
         backgroundColor: "#637077",
@@ -76,9 +84,9 @@ define(function (require) {
 		]
 	});
 
-    function processEvent(data) {
+	function renderEvent(data){
 
-        var yTime = [];
+	    var yTime = [];
 
         if(firstTime == 0){
             firstTime = data.time;
@@ -127,8 +135,67 @@ define(function (require) {
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
                 break;
         }
-
         chart.render();
+	}
+
+    function renderChart(){
+        var currentEvents = getCurrentData();
+        var data;
+
+        for(var i = 0; i< currentEvents.length; i++){
+            data = currentEvents[i];
+            renderEvent(data);
+        }
+    }
+
+    function getCurrentEvents(){
+
+        for(var i=0; i<devices.length; i++){
+            if(devices[i].id === currentDeviceId){
+                return devices[i].events;
+            }
+        }
+    }
+
+	function hasThisDevice(deviceId){
+
+	    for(var i=0; i < devices.length; i++){
+	        if(devices[i].id === deviceId){
+	            return true;
+	        }
+	    }
+
+	    return false;
+	}
+
+	function addNewEvent(data){
+
+	    for(var i=0; i < devices.length; i++){
+            if(devices[i].id === data.deviceId){
+                devices[i].events.push(data);
+            }
+        }
+	}
+
+	function addSelectElement(deviceId){
+        var opt = document.createElement('option');
+        opt.value = deviceId;
+        opt.innerHTML = deviceId;
+        select.appendChild(opt);
+    }
+
+    function processEvent(data) {
+
+        if(!hasThisDevice(data.deviceId)){
+            devices.push({id:data.deviceId, events: [data]});
+            addSelectElement(data.deviceId);
+        }else{
+            addNewEvent(data);
+        }
+
+        renderEvent(data);
+
+        console.log(devices);
     }
 
     /** DEBUG Msgs
@@ -287,7 +354,6 @@ define(function (require) {
 
     var buttonZoomOut = document.getElementById("buttonZoomOut");
         buttonZoomOut.addEventListener("click", function() {
-
 
         if(chart.options.axisY.interval >= 0.5){
             chart.options.axisY.interval = chart.options.axisY.interval / 2;
