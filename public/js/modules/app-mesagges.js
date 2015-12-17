@@ -13,6 +13,8 @@ define(function (require) {
         socket.emit('join', {room: 'statistics'});
     });
 
+    var colorChartFont = "white";
+
     var firstTime = 0;
     var tasks = [];
     var taskEvent = -1;
@@ -26,12 +28,9 @@ define(function (require) {
     var addEventAuxVar = 5;
 
     var chart = new CanvasJS.Chart("chartContainer",{
-        height: 500,
+        height: 600,
         backgroundColor: "#637077",
-		title:{
-			text: "QA Wall Eventos",
-            fontSize: 40
-		},
+
         legend: {
             fontSize: 15
         },
@@ -43,8 +42,8 @@ define(function (require) {
 			interval: 0.1,
             labelFontSize: 10,
             titleFontSize: 20,
-            labelFontColor: "white",
-            titleFontColor: "white",
+            labelFontColor: colorChartFont,
+            titleFontColor: colorChartFont,
             viewportMinimum: vpMin,
             viewportMaximum: vpMax
         },
@@ -53,8 +52,8 @@ define(function (require) {
 			title: "Eventos",
             labelFontSize: 15,
             titleFontSize: 20,
-            labelFontColor: "white",
-            titleFontColor: "white",
+            labelFontColor: colorChartFont,
+            titleFontColor: colorChartFont,
             viewportMinimum: -4.5,
             viewportMaximum: 1.5,
             labelFormatter: function ( e ) {
