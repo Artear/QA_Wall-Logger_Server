@@ -58,13 +58,19 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     _debug('Codiarte Response: ' + response.statusCode + " " + body);
 });
 
+app.post("/api/upload_apk", function (req, res, next) {
 
-app.post("/api/upload", function (req, res, next) {
-    upload.single('file')(req, res, function (err) {
+    console.log("Beginning Upload");
+
+    upload.single('apk')(req, res, function (err) {
         if (err) {
             res.sendStatus(401);
+            console.log("Error Uploading - " + err);
             return
         }
+
+        console.log("Done Uploading " + req.file);
+
         res.sendStatus(200);
     })
 });

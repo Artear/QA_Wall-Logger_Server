@@ -1,38 +1,32 @@
 define(function (require) {
 
-    var $ = require('jquery'),
-        socket = null;
+    var $ = require('jquery');
 
-    var app = {};
-
-    /*$.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
-    }).done(function() {
-        socket.on('log', processEvent);
-        socket.emit('join', {room: 'statistics'});
-    });*/
-
-    var configWall = function(){
+    var configWall = function () {
         var self = this;
         //self.test = 'test';
 
-        $("#main-form").submit(function(){
+        $("#main-form").submit(function (event) {
             event.stopPropagation();
             event.preventDefault();
+
+            var formData = new FormData();
+            formData.append('file', $('#fileinput').files);
+            var file = $('#fileinput');
+
             $.ajax({
-                async: true,
-                cache: false,
-                dataType: 'multipart/form-data',
-                method: 'POST',
-                url: 'api/upload'
+                    async: true,
+                    cache: false,
+                    contentType: file.type,
+                    method: 'POST',
+                    url: 'api/upload_apk',
+                    data: file
                 })
-            .sucess(function (data) {
-                console.log(data);
-            });
+                .done(function (data) {
+                    console.log("Done Uploading " + data);
+                });
         });
     };
 
-    app = new configWall();
-    return app;
-
+    return new configWall();
 });
