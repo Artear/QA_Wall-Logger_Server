@@ -7,6 +7,7 @@ import thread
 import curses
 import datetime
 import subprocess
+import sys
 from optparse import OptionParser
 
 
@@ -42,6 +43,11 @@ parser.add_option("-u", "--uninstall", action="store_true",
 
 (options, args) = parser.parse_args()
 
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    exit(1)
 
 # ------------------------------------------- FINDING DEVICES -----------------------------------------------------#
 
