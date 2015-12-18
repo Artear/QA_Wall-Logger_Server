@@ -14,17 +14,17 @@ var bitly = new bitlyAPI({
     client_secret: CONFIG.bitly_secret
 });
 /* Multer */
-var multer  = require('multer');
+var multer = require('multer');
 var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'tmp/api-upload')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + file.originalname)
-  }
+    destination: function (req, file, cb) {
+        cb(null, 'tmp/api-upload')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + file.originalname)
+    }
 });
 
-var upload = multer({ storage: storage });
+var upload = multer({storage: storage});
 /*--------*/
 
 bitly.setAccessToken(CONFIG.bitly_access_token);
@@ -41,7 +41,7 @@ app.use(express.static(CONFIG.static_dir)).listen(CONFIG.static_port, function (
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
-exec('ls', {silent:true}, function(code, output) {
+exec('ls', {silent: true}, function (code, output) {
     console.log('Exit code:', code);
     console.log('Program output:', output);
     //socket.emit('fun', output)
@@ -54,17 +54,17 @@ var DEBUG = true,
     currentPage = {};
 
 //Save ip on Remote, so any client can look where to connect;
-request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&message_port=" + CONFIG.static_port+ "&socket_port=" + CONFIG.socket_port, function (error, response, body) {
-    _debug('Codiarte Response:' + body);
+request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?localIp=" + ip.address() + "&message_port=" + CONFIG.static_port + "&socket_port=" + CONFIG.socket_port, function (error, response, body) {
+    _debug('Codiarte Response: ' + response.statusCode + " " + body);
 });
 
 
-app.post("/api/upload", function(req, res, next) {
+app.post("/api/upload", function (req, res, next) {
     upload.single('file')(req, res, function (err) {
-    if (err) {
-      res.sendStatus(401);
-      return
-    }
+        if (err) {
+            res.sendStatus(401);
+            return
+        }
         res.sendStatus(200);
     })
 });
