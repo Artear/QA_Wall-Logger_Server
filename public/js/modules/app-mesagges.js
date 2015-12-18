@@ -33,8 +33,9 @@ define(function (require) {
     var devices = [];
     var currentDeviceId;
     var select = document.getElementById('selectDevice');
-    select.onselect=function(){
+    select.onchange=function(){
         currentDeviceId = $(this).val();
+        console.log("On select : ", currentDeviceId)
         renderChart();
     };
 
@@ -79,7 +80,7 @@ define(function (require) {
 			{
 				type: "rangeBar",
 				yValueFormatString: "#0.## segundos",
-				dataPoints: tasks
+				dataPoints: []
 			}
 		]
 	});
@@ -88,23 +89,28 @@ define(function (require) {
 
 	    var yTime = [];
 
+        //TODO select firstTime From devices list...
+//      var firstTime = getCurrentFirstTime();
+//      console.log(firstTime);
         if(firstTime == 0){
             firstTime = data.time;
         }
+
+        tasks = chart.options.data[0].dataPoints;
 
         switch(data.type) {
             case "PERIOD_START":
                 //Start of a task
                 taskEvent++;
                 console.log("PERIOD_START: ", data);
-                if(tasks.length == 0) {
+                if(tasks.length == 0 ) {
                     tasks.push({x: taskEvent*-1,
                                 y: [0, 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
-                    console.log("PERIOD_START: ", data);
+                    console.log("PERIOD_START1: ", data);
                 } else {
                     var calc =  (data.time - firstTime) / 1000.0;
 
@@ -114,6 +120,7 @@ define(function (require) {
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
+                           console.log("PERIOD_START2: ", data);
                 }
                 break;
             case "PERIOD_END":
@@ -127,25 +134,39 @@ define(function (require) {
                     tasks[j].y = [yTime[0], (data.time - firstTime) / 1000.0];
                     tasks[j].end = true;
                 }
+                console.log("PERIOD_END: ", data);
                 break;
             case "EVENT":
                 //EVENT
                 var calc =  (data.time-firstTime) / 1000.0;
                 tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
+                console.log("EVENT: ", data);
                 break;
         }
+
+        console.log("CANTIDAD DE EVENTOS", tasks.length);
         chart.render();
 	}
 
-    function renderChart(){
-        var currentEvents = getCurrentData();
-        var data;
+	function resetChart(){
+        chart.options.data[0].dataPoints.length = 0;
+	}
 
+    function renderChart(){
+
+        resetChart();
+        console.log("DATAPOINTS: ", chart.options.data[0].dataPoints);
+        var currentEvents = getCurrentEvents();
+        var data;
+        console.log(currentEvents);
         for(var i = 0; i< currentEvents.length; i++){
+            console.log("LOOPEANDO" , i);
             data = currentEvents[i];
             renderEvent(data);
         }
+        console.log("DEVICES: " , devices);
+        console.log(chart);
     }
 
     function getCurrentEvents(){
@@ -153,6 +174,14 @@ define(function (require) {
         for(var i=0; i<devices.length; i++){
             if(devices[i].id === currentDeviceId){
                 return devices[i].events;
+            }
+        }
+    }
+
+    function getCurrentFirstTime(){
+        for(var i=0; i<devices.length; i++){
+            if(devices[i].id === currentDeviceId){
+                return devices[i].firstTime;
             }
         }
     }
@@ -182,28 +211,32 @@ define(function (require) {
         opt.value = deviceId;
         opt.innerHTML = deviceId;
         select.appendChild(opt);
+
+        //First time to set the current deviceId and can draw all the events
+        if(currentDeviceId === undefined){
+            currentDeviceId = deviceId;
+        }
     }
 
     function processEvent(data) {
 
         if(!hasThisDevice(data.deviceId)){
-            devices.push({id:data.deviceId, events: [data]});
+            devices.push({id:data.deviceId, currentTime: 0, events: [data]});
             addSelectElement(data.deviceId);
         }else{
             addNewEvent(data);
         }
 
-        renderEvent(data);
+//         console.log(data.deviceId, " es igual ???? a :",currentDeviceId);
 
-        console.log(devices);
+        //TODO see that to draw correctly the first element
+        if(data.deviceId === currentDeviceId){
+            renderEvent(data);
+        }
+
+        console.log("DEVICES: " , devices);
+        console.log(chart);
     }
-
-    /** DEBUG Msgs
-    tasks.push({x: -1, y: [0, 1], label: "data.message", deviceId: "data.deviceId", id: "data.id", end: false});
-    tasks.push({x: -2, y: [0.5, 3.1], label: "data.message2", deviceId: "data.deviceId2", id: "data.id2", end: false});
-    tasks.push({x: -3, y: [2, 2.8], label: "data.message3", deviceId: "data.deviceId3", id: "data.id3", end: false});
-    tasks.push({x: -4, y: [3, 3.1], label: "data.message4", deviceId: "data.deviceId4", id: "data.id4", end: false});
-    /***/
 
     chart.render();
 
@@ -213,6 +246,8 @@ define(function (require) {
             var event;
             var yAux;
             var cantStartEndEvent = 0;
+
+            tasks = chart.options.data[0].dataPoints;
 
             for(var i = 0; i< tasks.length; i++){
 
@@ -266,28 +301,6 @@ define(function (require) {
         return (event1.y[1] - event2.y[1]);
     }
 
-    /** DEBUG Msgs
-    var buttonLive = document.getElementById("buttonLive");
-    buttonLive.addEventListener("click", function() {
-                 live = !live;
-               }, false);
-
-    var buttonAddEvent = document.getElementById("buttonAddEvent");
-    buttonAddEvent.addEventListener("click", function() {
-
-                    var data = {"deviceId":"fe19b2535f8ea300","id":"f40fecf1-835b-4584-b78b-6cbc23371e7a","message":"GranTitular","time":1450192042898,"type":"PERIOD_START"};
-                    processEvent(data);
-
-                 }, false);
-
-    var buttonEndEvent = document.getElementById("buttonEndEvent");
-    buttonEndEvent.addEventListener("click", function() {
-
-                    var data = {"deviceId":"fe19b2535f8ea300","id":"f40fecf1-835b-4584-b78b-6cbc23371e7a","message":"GranTitular","time":1450192044038,"type":"PERIOD_END"};
-                    processEvent(data);
-
-                 }, false);
-    **/
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
@@ -363,7 +376,6 @@ define(function (require) {
         }
 
     }, false);
-
 
     setInterval(timerChart, updateInterval);
 
