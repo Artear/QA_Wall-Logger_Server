@@ -14,7 +14,7 @@ var bitly = new bitlyAPI({
     client_secret: CONFIG.bitly_secret
 });
 /* Multer */
-var multer  = require('multer')
+var multer  = require('multer');
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'tmp/api-upload')
@@ -22,9 +22,9 @@ var storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + file.originalname)
   }
-})
+});
 
-var upload = multer({ storage: storage })
+var upload = multer({ storage: storage });
 /*--------*/
 
 bitly.setAccessToken(CONFIG.bitly_access_token);
