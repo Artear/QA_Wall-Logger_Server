@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+        socket = require('io').connect("192.168.15.141:" + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -18,9 +18,9 @@ define(function (require) {
     var titleAxisFontSize = 20;
     /** ===== **/
 
-    var firstTime = 0;
+//    var firstTime = 0;
     var tasks = [];
-    var taskEvent = -1;
+//    var taskEvent = -1;
     var updateInterval = 500;//Milliseconds
 
     var vpMin = 0;
@@ -31,11 +31,19 @@ define(function (require) {
     var addEventAuxVar = 5;
 
     var devices = [];
-    var currentDeviceId;
+    var currentDevice;
+
     var select = document.getElementById('selectDevice');
     select.onchange=function(){
-        currentDeviceId = $(this).val();
-        console.log("On select : ", currentDeviceId)
+        var currentDeviceId = $(this).val();
+
+        for(var i=0; i<devices.length; i++){
+            if(devices[i].id === currentDeviceId){
+                currentDevice = devices[i];
+            }
+        }
+
+        console.log("On CHANGE : ", currentDevice.id)
         renderChart();
     };
 
@@ -89,11 +97,10 @@ define(function (require) {
 
 	    var yTime = [];
 
-        //TODO select firstTime From devices list...
-//      var firstTime = getCurrentFirstTime();
-//      console.log(firstTime);
-        if(firstTime == 0){
-            firstTime = data.time;
+        console.log(currentDevice.firstTime);
+        if(currentDevice.firstTime == 0){
+            currentDevice.firstTime = data.time;
+            console.log(currentDevice.firstTime);
         }
 
         tasks = chart.options.data[0].dataPoints;
@@ -101,10 +108,10 @@ define(function (require) {
         switch(data.type) {
             case "PERIOD_START":
                 //Start of a task
-                taskEvent++;
+
                 console.log("PERIOD_START: ", data);
                 if(tasks.length == 0 ) {
-                    tasks.push({x: taskEvent*-1,
+                    tasks.push({x: currentDevice.cantTaskEvents * -1,
                                 y: [0, 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
@@ -112,9 +119,9 @@ define(function (require) {
                                 end: false})
                     console.log("PERIOD_START1: ", data);
                 } else {
-                    var calc =  (data.time - firstTime) / 1000.0;
+                    var calc =  (data.time - currentDevice.firstTime) / 1000.0;
 
-                    tasks.push({x: taskEvent*-1,
+                    tasks.push({x: currentDevice.cantTaskEvents * -1,
                                 y: [calc, calc + 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
@@ -122,6 +129,10 @@ define(function (require) {
                                 end: false})
                            console.log("PERIOD_START2: ", data);
                 }
+
+                currentDevice.cantTaskEvents++;
+
+                console.log(currentDevice.cantTaskEvents);
                 break;
             case "PERIOD_END":
                 //End of a task
@@ -131,14 +142,14 @@ define(function (require) {
                 }
                 if(j != tasks.length) {
                     yTime = tasks[j].y;
-                    tasks[j].y = [yTime[0], (data.time - firstTime) / 1000.0];
+                    tasks[j].y = [yTime[0], (data.time - currentDevice.firstTime) / 1000.0];
                     tasks[j].end = true;
                 }
                 console.log("PERIOD_END: ", data);
                 break;
             case "EVENT":
                 //EVENT
-                var calc =  (data.time-firstTime) / 1000.0;
+                var calc =  (data.time - currentDevice.firstTime) / 1000.0;
                 tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
                 console.log("EVENT: ", data);
@@ -150,6 +161,7 @@ define(function (require) {
 	}
 
 	function resetChart(){
+	    tasks.length = 0;
         chart.options.data[0].dataPoints.length = 0;
 	}
 
@@ -158,32 +170,21 @@ define(function (require) {
         resetChart();
         console.log("DATAPOINTS: ", chart.options.data[0].dataPoints);
         var currentEvents = getCurrentEvents();
-        var data;
         console.log(currentEvents);
         for(var i = 0; i< currentEvents.length; i++){
             console.log("LOOPEANDO" , i);
-            data = currentEvents[i];
-            renderEvent(data);
+            renderEvent(currentEvents[i]);
         }
         console.log("DEVICES: " , devices);
         console.log(chart);
     }
 
     function getCurrentEvents(){
-
-        for(var i=0; i<devices.length; i++){
-            if(devices[i].id === currentDeviceId){
-                return devices[i].events;
-            }
-        }
+        return currentDevice.events;
     }
 
     function getCurrentFirstTime(){
-        for(var i=0; i<devices.length; i++){
-            if(devices[i].id === currentDeviceId){
-                return devices[i].firstTime;
-            }
-        }
+        return ;
     }
 
 	function hasThisDevice(deviceId){
@@ -206,23 +207,24 @@ define(function (require) {
         }
 	}
 
-	function addSelectElement(deviceId){
+	function addSelectElement(device){
         var opt = document.createElement('option');
-        opt.value = deviceId;
-        opt.innerHTML = deviceId;
+        opt.value = device.id;
+        opt.innerHTML = device.id;
         select.appendChild(opt);
 
         //First time to set the current deviceId and can draw all the events
-        if(currentDeviceId === undefined){
-            currentDeviceId = deviceId;
+        if(currentDevice === undefined){
+            currentDevice = device;
         }
     }
 
     function processEvent(data) {
 
         if(!hasThisDevice(data.deviceId)){
-            devices.push({id:data.deviceId, currentTime: 0, events: [data]});
-            addSelectElement(data.deviceId);
+            var newDevice = {id:data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0, };
+            devices.push(newDevice);
+            addSelectElement(newDevice);
         }else{
             addNewEvent(data);
         }
@@ -230,12 +232,12 @@ define(function (require) {
 //         console.log(data.deviceId, " es igual ???? a :",currentDeviceId);
 
         //TODO see that to draw correctly the first element
-        if(data.deviceId === currentDeviceId){
+        if(data.deviceId === currentDevice.id){
             renderEvent(data);
         }
 
-        console.log("DEVICES: " , devices);
-        console.log(chart);
+//        console.log("DEVICES: " , devices);
+//        console.log(chart);
     }
 
     chart.render();
