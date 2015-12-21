@@ -18,9 +18,7 @@ define(function (require) {
     var titleAxisFontSize = 20;
     /** ===== **/
 
-//    var firstTime = 0;
     var tasks = [];
-//    var taskEvent = -1;
     var updateInterval = 500;//Milliseconds
 
     var vpMin = 0;
@@ -51,7 +49,6 @@ define(function (require) {
     var chart = new CanvasJS.Chart("chartContainer",{
         height: 600,
         backgroundColor: "#637077",
-
         legend: {
             fontSize: 15
         },
@@ -109,8 +106,6 @@ define(function (require) {
         switch(data.type) {
             case "PERIOD_START":
                 //Start of a task
-
-                console.log("PERIOD_START: ", data);
                 if(tasks.length == 0 ) {
                     tasks.push({x: currentDevice.cantTaskEvents * -1,
                                 y: [0, 0.1],
@@ -118,7 +113,6 @@ define(function (require) {
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
-                    console.log("PERIOD_START1: ", data);
                 } else {
                     var calc =  (data.time - currentDevice.firstTime) / 1000.0;
 
@@ -128,12 +122,9 @@ define(function (require) {
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
-                           console.log("PERIOD_START2: ", data);
                 }
 
                 currentDevice.cantTaskEvents++;
-
-                console.log(currentDevice.cantTaskEvents);
                 break;
             case "PERIOD_END":
                 //End of a task
@@ -146,18 +137,15 @@ define(function (require) {
                     tasks[j].y = [yTime[0], (data.time - currentDevice.firstTime) / 1000.0];
                     tasks[j].end = true;
                 }
-                console.log("PERIOD_END: ", data);
                 break;
             case "EVENT":
                 //EVENT
                 var calc =  (data.time - currentDevice.firstTime) / 1000.0;
                 tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
-                console.log("EVENT: ", data);
                 break;
         }
 
-        console.log("CANTIDAD DE EVENTOS", tasks.length);
         chart.render();
 	}
 
@@ -169,11 +157,9 @@ define(function (require) {
     function renderChart(){
 
         resetChart();
-        console.log("DATAPOINTS: ", chart.options.data[0].dataPoints);
         var currentEvents = getCurrentEvents();
         console.log(currentEvents);
         for(var i = 0; i< currentEvents.length; i++){
-            console.log("LOOPEANDO" , i);
             renderEvent(currentEvents[i]);
         }
         console.log("DEVICES: " , devices);
@@ -287,8 +273,12 @@ define(function (require) {
 
             }
 
+
+
             chart.render();
         }
+
+        console.log(chart);
     }
 
     /**
