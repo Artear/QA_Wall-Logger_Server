@@ -17,10 +17,10 @@ var bitly = new bitlyAPI({
 var multer = require('multer');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'tmp/api-upload')
+        cb(null, 'tmp/api-upload/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + file.originalname)
+        cb(null, file.originalname)
     }
 });
 
@@ -41,11 +41,6 @@ app.use(express.static(CONFIG.static_dir)).listen(CONFIG.static_port, function (
 
 // https://www.npmjs.com/package/shelljs#exec-command-options-callback
 require('shelljs/global');
-exec('ls', {silent: true}, function (code, output) {
-    console.log('Exit code:', code);
-    console.log('Program output:', output);
-    //socket.emit('fun', output)
-});
 
 /**
  * globals
@@ -69,8 +64,11 @@ app.post("/api/upload_apk", function (req, res, next) {
             return
         }
 
-        console.log("Done Uploading " + req.file);
-
+        console.log("Done Uploading " + req.file.originalname);
+        exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -r', {silent: true}, function (code, output) {
+            console.log('Program output:', output);
+            io.sockets.emit('apk-installing', output);
+        });
         res.sendStatus(200);
     })
 });

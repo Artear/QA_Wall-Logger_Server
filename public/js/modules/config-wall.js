@@ -10,22 +10,30 @@ define(function (require) {
             event.stopPropagation();
             event.preventDefault();
 
-            var formData = new FormData();
-            formData.append('file', $('#fileinput').files);
-            var file = $('#fileinput');
+            var formData = new FormData($(this)[0]);
 
             $.ajax({
                     async: true,
+                    data: formData,
                     cache: false,
-                    contentType: file.type,
-                    method: 'POST',
-                    url: 'api/upload_apk',
-                    data: file
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    url: 'api/upload_apk'
                 })
                 .done(function (data) {
                     console.log("Done Uploading " + data);
                 });
         });
+
+        return {
+            writeOutput: function(data){
+                $("#apk-output p").hide()
+                            .empty()
+                            .html(data)
+                            .fadeIn('slow');
+            }
+        }
     };
 
     return new configWall();
