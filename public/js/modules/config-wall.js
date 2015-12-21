@@ -28,10 +28,12 @@ define(function (require) {
 
         return {
             writeOutput: function(data){
-                $("#apk-output p").hide()
+                $("#apk-output p").append(data)
+                $("#apk-output").show();
+                            /*.hide()
                             .empty()
                             .html(data)
-                            .fadeIn('slow');
+                            .fadeIn('slow');*/
             }
         }
     };

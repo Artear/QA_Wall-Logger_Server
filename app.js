@@ -65,10 +65,14 @@ app.post("/api/upload_apk", function (req, res, next) {
         }
 
         console.log("Done Uploading " + req.file.originalname);
-        exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async: true}, function (code, output) {
+        /*exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async: false}, function (code, output) {
             console.log('Program output:', output);
             io.sockets.emit('apk-installing', output);
-        });
+        }); */
+        var child = exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async:true});
+            child.stdout.on('data', function(data) {
+                io.sockets.emit('apk-installing', data);
+            });
         res.sendStatus(200);
     })
 });
