@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect("192.168.15.141:" + data.socket_port +'/');
+        socket = require('io').connect("192.168.15.128:" + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -40,6 +40,7 @@ define(function (require) {
         for(var i=0; i<devices.length; i++){
             if(devices[i].id === currentDeviceId){
                 currentDevice = devices[i];
+                currentDevice.cantTaskEvents = 0;
             }
         }
 
@@ -183,10 +184,6 @@ define(function (require) {
         return currentDevice.events;
     }
 
-    function getCurrentFirstTime(){
-        return ;
-    }
-
 	function hasThisDevice(deviceId){
 
 	    for(var i=0; i < devices.length; i++){
@@ -222,7 +219,7 @@ define(function (require) {
     function processEvent(data) {
 
         if(!hasThisDevice(data.deviceId)){
-            var newDevice = {id:data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0, };
+            var newDevice = {id:data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0 };
             devices.push(newDevice);
             addSelectElement(newDevice);
         }else{
