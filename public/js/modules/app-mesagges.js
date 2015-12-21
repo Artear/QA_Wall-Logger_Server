@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect("192.168.15.128:" + data.socket_port +'/');
+        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
