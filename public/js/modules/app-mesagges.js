@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+        socket = require('io').connect('192.168.15.128:' + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -23,6 +23,9 @@ define(function (require) {
 
     var vpMin = 0;
     var vpMax = 1;
+
+    var defaultXViewportMaximum = 1.5;
+    var defaultXViewportMinimum = -4.5;
 
     var live = true;//false; DEBUG
     var controlMovement = false;
@@ -72,8 +75,8 @@ define(function (require) {
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
-            viewportMinimum: -4.5,
-            viewportMaximum: 1.5,
+            viewportMaximum: defaultXViewportMaximum,
+            viewportMinimum: defaultXViewportMinimum,
             labelFormatter: function ( e ) {
                             if(e.label === null){
                                     return "";
@@ -264,16 +267,19 @@ define(function (require) {
                     chart.options.axisY.viewportMaximum = vpMax;
                 }
 
-                //There are many Start-End Events and need to scroll down.
-                if(cantStartEndEvent > (5/1)){
+                //If a particular event scroll to up to visualize them
+                if(latestEvent.x > 0){
+                    chart.options.axisX.viewportMinimum = defaultXViewportMinimum;
+                    chart.options.axisX.viewportMaximum = defaultXViewportMaximum;
+
+                }else if(cantStartEndEvent > (5/1)){ //There are many Start-End Events and need to scroll down.
+
                     chart.options.axisX.viewportMinimum = -(cantStartEndEvent * 1) ;
                     chart.options.axisX.viewportMaximum = -(cantStartEndEvent * 1) + 5;
                     console.log("pasooo", cantStartEndEvent,  cantStartEndEvent * 0.5);
                 }
 
             }
-
-
 
             chart.render();
         }
