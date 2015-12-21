@@ -65,7 +65,7 @@ app.post("/api/upload_apk", function (req, res, next) {
         }
 
         console.log("Done Uploading " + req.file.originalname);
-        exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -r', {silent: true}, function (code, output) {
+        exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async: true}, function (code, output) {
             console.log('Program output:', output);
             io.sockets.emit('apk-installing', output);
         });
