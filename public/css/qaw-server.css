@@ -364,11 +364,28 @@ body {
     .actions-bar-buttons input:first-child {
       margin-left: 0; }
 
-#selectDevice {
+#contentSelect {
     margin-left: 50px;
+    padding: .5em;
+    background: none;
+}
+
+#labelSelect {
+ font-size: 16px;
+}
+
+#selectDevice{
+    min-width: 150px;
+    margin-left: 5px;
+    margin-bottom: 5px;
     box-sizing: border-box;
     padding: .5em;
     background: none;
     border-color: #a1a9ad;
     border-style: solid;
+}
+
+#chartContainer{
+    margin-left: 0.5em;
+    margin-right: 1.5em;
 }
