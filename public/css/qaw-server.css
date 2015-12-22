@@ -360,3 +360,68 @@ body {
   #modal .qrcode-url {
     text-decoration: none;
     color: black; }
+
+#contentButton {
+  width: 200px;
+  margin-left: 50px;
+  horizontal-align: right;
+  float: right;
+  display: block;
+  margin-right: 25px; }
+
+.buttonAux {
+  background: #345678; }
+
+#buttonZoomIn {
+  font-size: 1.25em; }
+
+#buttonZoomOut {
+  font-size: 1.25em; }
+
+#buttonControlMovement {
+  text-align: center; }
+
+.actions-bar-zoom {
+  margin: .5em; }
+  .actions-bar-zoom input {
+    width: 48%;
+    margin-left: 4%;
+    display: block;
+    float: left;
+    padding: 0; }
+  .actions-bar-zoom input:first-child {
+    margin-left: 0; }
+
+.actions-bar-buttons {
+  margin: .5em;
+  margin-top: 2cm; }
+  .actions-bar-buttons input {
+    width: 48%;
+    display: block;
+    margin-left: 4%;
+    float: left;
+    padding: 0; }
+  .actions-bar-buttons input:first-child {
+    margin-left: 0; }
+
+#contentSelect {
+  margin-left: 50px;
+  padding: .5em;
+  background: none; }
+
+#labelSelect {
+  font-size: 16px; }
+
+#selectDevice {
+  min-width: 150px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+  padding: .5em;
+  background: none;
+  border-color: #a1a9ad;
+  border-style: solid; }
+
+#chartContainer {
+  margin-left: 0.5em;
+  margin-right: 1.5em; }

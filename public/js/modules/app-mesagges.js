@@ -18,30 +18,39 @@ define(function (require) {
     var titleAxisFontSize = 20;
     /** ===== **/
 
-    var firstTime = 0;
     var tasks = [];
-    var taskEvent = -1;
     var updateInterval = 500;//Milliseconds
 
     var vpMin = 0;
     var vpMax = 1;
+
+    var defaultXViewportMaximum = 1.5;
+    var defaultXViewportMinimum = -4.5;
 
     var live = true;//false; DEBUG
     var controlMovement = false;
     var addEventAuxVar = 5;
 
     var devices = [];
-    var currentDeviceId;
+    var currentDevice;
+
     var select = document.getElementById('selectDevice');
-    select.onselect=function(){
-        currentDeviceId = $(this).val();
+    select.onchange=function(){
+        var currentDeviceId = $(this).val();
+
+        for(var i=0; i<devices.length; i++){
+            if(devices[i].id === currentDeviceId){
+                currentDevice = devices[i];
+                currentDevice.cantTaskEvents = 0;
+            }
+        }
+
         renderChart();
     };
 
     var chart = new CanvasJS.Chart("chartContainer",{
         height: 600,
         backgroundColor: "#637077",
-
         legend: {
             fontSize: 15
         },
@@ -65,8 +74,8 @@ define(function (require) {
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
-            viewportMinimum: -4.5,
-            viewportMaximum: 1.5,
+            viewportMaximum: defaultXViewportMaximum,
+            viewportMinimum: defaultXViewportMinimum,
             labelFormatter: function ( e ) {
                             if(e.label === null){
                                     return "";
@@ -79,7 +88,7 @@ define(function (require) {
 			{
 				type: "rangeBar",
 				yValueFormatString: "#0.## segundos",
-				dataPoints: tasks
+				dataPoints: []
 			}
 		]
 	});
@@ -88,33 +97,36 @@ define(function (require) {
 
 	    var yTime = [];
 
-        if(firstTime == 0){
-            firstTime = data.time;
+        console.log(currentDevice.firstTime);
+        if(currentDevice.firstTime == 0){
+            currentDevice.firstTime = data.time;
+            console.log(currentDevice.firstTime);
         }
+
+        tasks = chart.options.data[0].dataPoints;
 
         switch(data.type) {
             case "PERIOD_START":
                 //Start of a task
-                taskEvent++;
-                console.log("PERIOD_START: ", data);
-                if(tasks.length == 0) {
-                    tasks.push({x: taskEvent*-1,
+                if(tasks.length == 0 ) {
+                    tasks.push({x: currentDevice.cantTaskEvents * -1,
                                 y: [0, 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
-                    console.log("PERIOD_START: ", data);
                 } else {
-                    var calc =  (data.time - firstTime) / 1000.0;
+                    var calc =  (data.time - currentDevice.firstTime) / 1000.0;
 
-                    tasks.push({x: taskEvent*-1,
+                    tasks.push({x: currentDevice.cantTaskEvents * -1,
                                 y: [calc, calc + 0.1],
                                 label: data.message,
                                 deviceId: data.deviceId,
                                 id: data.id,
                                 end: false})
                 }
+
+                currentDevice.cantTaskEvents++;
                 break;
             case "PERIOD_END":
                 //End of a task
@@ -124,37 +136,37 @@ define(function (require) {
                 }
                 if(j != tasks.length) {
                     yTime = tasks[j].y;
-                    tasks[j].y = [yTime[0], (data.time - firstTime) / 1000.0];
+                    tasks[j].y = [yTime[0], (data.time - currentDevice.firstTime) / 1000.0];
                     tasks[j].end = true;
                 }
                 break;
             case "EVENT":
                 //EVENT
-                var calc =  (data.time-firstTime) / 1000.0;
+                var calc =  (data.time - currentDevice.firstTime) / 1000.0;
                 tasks.push({x: 1, y: [calc, calc + 0.001], name: data.message, label: 'Eventos',
                     deviceId: data.deviceId, id: data.id, toolTipContent: "{name}"});
                 break;
         }
+
         chart.render();
 	}
 
-    function renderChart(){
-        var currentEvents = getCurrentData();
-        var data;
+	function resetChart(){
+	    tasks.length = 0;
+        chart.options.data[0].dataPoints.length = 0;
+	}
 
+    function renderChart(){
+
+        resetChart();
+        var currentEvents = getCurrentEvents();
         for(var i = 0; i< currentEvents.length; i++){
-            data = currentEvents[i];
-            renderEvent(data);
+            renderEvent(currentEvents[i]);
         }
     }
 
     function getCurrentEvents(){
-
-        for(var i=0; i<devices.length; i++){
-            if(devices[i].id === currentDeviceId){
-                return devices[i].events;
-            }
-        }
+        return currentDevice.events;
     }
 
 	function hasThisDevice(deviceId){
@@ -177,33 +189,32 @@ define(function (require) {
         }
 	}
 
-	function addSelectElement(deviceId){
+	function addSelectElement(device){
         var opt = document.createElement('option');
-        opt.value = deviceId;
-        opt.innerHTML = deviceId;
+        opt.value = device.id;
+        opt.innerHTML = device.id;
         select.appendChild(opt);
+
+        //First time to set the current deviceId and can draw all the events
+        if(currentDevice === undefined){
+            currentDevice = device;
+        }
     }
 
     function processEvent(data) {
 
         if(!hasThisDevice(data.deviceId)){
-            devices.push({id:data.deviceId, events: [data]});
-            addSelectElement(data.deviceId);
+            var newDevice = {id: data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0 };
+            devices.push(newDevice);
+            addSelectElement(newDevice);
         }else{
             addNewEvent(data);
         }
 
-        renderEvent(data);
-
-        console.log(devices);
+        if(data.deviceId === currentDevice.id){
+            renderEvent(data);
+        }
     }
-
-    /** DEBUG Msgs
-    tasks.push({x: -1, y: [0, 1], label: "data.message", deviceId: "data.deviceId", id: "data.id", end: false});
-    tasks.push({x: -2, y: [0.5, 3.1], label: "data.message2", deviceId: "data.deviceId2", id: "data.id2", end: false});
-    tasks.push({x: -3, y: [2, 2.8], label: "data.message3", deviceId: "data.deviceId3", id: "data.id3", end: false});
-    tasks.push({x: -4, y: [3, 3.1], label: "data.message4", deviceId: "data.deviceId4", id: "data.id4", end: false});
-    /***/
 
     chart.render();
 
@@ -213,6 +224,8 @@ define(function (require) {
             var event;
             var yAux;
             var cantStartEndEvent = 0;
+
+            tasks = chart.options.data[0].dataPoints;
 
             for(var i = 0; i< tasks.length; i++){
 
@@ -244,11 +257,15 @@ define(function (require) {
                     chart.options.axisY.viewportMaximum = vpMax;
                 }
 
-                //There are many Start-End Events and need to scroll down.
-                if(cantStartEndEvent > (5/1)){
+                //If a particular event scroll to up to visualize them
+                if(latestEvent.x > 0){
+                    chart.options.axisX.viewportMinimum = defaultXViewportMinimum;
+                    chart.options.axisX.viewportMaximum = defaultXViewportMaximum;
+
+                }else if(cantStartEndEvent > (5/1)){ //There are many Start-End Events and need to scroll down.
+
                     chart.options.axisX.viewportMinimum = -(cantStartEndEvent * 1) ;
                     chart.options.axisX.viewportMaximum = -(cantStartEndEvent * 1) + 5;
-                    console.log("pasooo", cantStartEndEvent,  cantStartEndEvent * 0.5);
                 }
 
             }
@@ -259,35 +276,14 @@ define(function (require) {
 
     /**
     *
-    *Return the last event on graph based axe Y. (Note axe Y is horizontally, and axe X was vertically)
+    *Return the last event on graph based axe Y.
+    *(Note axe Y is horizontally, and axe X was vertically)
     *
     **/
     function compareEvents(event1, event2){
         return (event1.y[1] - event2.y[1]);
     }
 
-    /** DEBUG Msgs
-    var buttonLive = document.getElementById("buttonLive");
-    buttonLive.addEventListener("click", function() {
-                 live = !live;
-               }, false);
-
-    var buttonAddEvent = document.getElementById("buttonAddEvent");
-    buttonAddEvent.addEventListener("click", function() {
-
-                    var data = {"deviceId":"fe19b2535f8ea300","id":"f40fecf1-835b-4584-b78b-6cbc23371e7a","message":"GranTitular","time":1450192042898,"type":"PERIOD_START"};
-                    processEvent(data);
-
-                 }, false);
-
-    var buttonEndEvent = document.getElementById("buttonEndEvent");
-    buttonEndEvent.addEventListener("click", function() {
-
-                    var data = {"deviceId":"fe19b2535f8ea300","id":"f40fecf1-835b-4584-b78b-6cbc23371e7a","message":"GranTitular","time":1450192044038,"type":"PERIOD_END"};
-                    processEvent(data);
-
-                 }, false);
-    **/
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
@@ -317,6 +313,9 @@ define(function (require) {
 
                     if(!controlMovement){
                         //TODO insert in order desc or asc and prevent this...
+
+                        tasks = chart.options.data[0].dataPoints;
+
                         tasks.sort(compareEvents);
                         var latestEvent = tasks[tasks.length - 1];
 
@@ -363,7 +362,6 @@ define(function (require) {
         }
 
     }, false);
-
 
     setInterval(timerChart, updateInterval);
 
