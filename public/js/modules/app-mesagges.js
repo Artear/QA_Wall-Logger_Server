@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect('192.168.15.128:' + data.socket_port +'/');
+        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -45,7 +45,6 @@ define(function (require) {
             }
         }
 
-        console.log("On CHANGE : ", currentDevice.id)
         renderChart();
     };
 
@@ -161,12 +160,9 @@ define(function (require) {
 
         resetChart();
         var currentEvents = getCurrentEvents();
-        console.log(currentEvents);
         for(var i = 0; i< currentEvents.length; i++){
             renderEvent(currentEvents[i]);
         }
-        console.log("DEVICES: " , devices);
-        console.log(chart);
     }
 
     function getCurrentEvents(){
@@ -208,22 +204,16 @@ define(function (require) {
     function processEvent(data) {
 
         if(!hasThisDevice(data.deviceId)){
-            var newDevice = {id:data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0 };
+            var newDevice = {id: data.deviceId, firstTime: 0, events: [data], cantTaskEvents: 0 };
             devices.push(newDevice);
             addSelectElement(newDevice);
         }else{
             addNewEvent(data);
         }
 
-//         console.log(data.deviceId, " es igual ???? a :",currentDeviceId);
-
-        //TODO see that to draw correctly the first element
         if(data.deviceId === currentDevice.id){
             renderEvent(data);
         }
-
-//        console.log("DEVICES: " , devices);
-//        console.log(chart);
     }
 
     chart.render();
@@ -276,20 +266,18 @@ define(function (require) {
 
                     chart.options.axisX.viewportMinimum = -(cantStartEndEvent * 1) ;
                     chart.options.axisX.viewportMaximum = -(cantStartEndEvent * 1) + 5;
-                    console.log("pasooo", cantStartEndEvent,  cantStartEndEvent * 0.5);
                 }
 
             }
 
             chart.render();
         }
-
-        console.log(chart);
     }
 
     /**
     *
-    *Return the last event on graph based axe Y. (Note axe Y is horizontally, and axe X was vertically)
+    *Return the last event on graph based axe Y.
+    *(Note axe Y is horizontally, and axe X was vertically)
     *
     **/
     function compareEvents(event1, event2){
@@ -325,6 +313,9 @@ define(function (require) {
 
                     if(!controlMovement){
                         //TODO insert in order desc or asc and prevent this...
+
+                        tasks = chart.options.data[0].dataPoints;
+
                         tasks.sort(compareEvents);
                         var latestEvent = tasks[tasks.length - 1];
 
