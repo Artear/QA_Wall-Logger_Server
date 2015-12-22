@@ -35,6 +35,20 @@ body {
   &.active {
     display:block;
   }
+
+  div#apk-output {
+    height: 200px;
+    width: 80%;
+    font-size: 12px;
+    margin-left: 10%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: none;
+  }
+
+  div#apk-reinstall {
+    display: none;
+  }
 }
 
 .logo {
@@ -78,6 +92,11 @@ body {
     width: 100%;
     box-sizing: border-box;
     padding: .5em;
+  }
+
+  input[type=submit]{
+    padding: 0;
+    margin-top: .5em;
   }
 
   select {

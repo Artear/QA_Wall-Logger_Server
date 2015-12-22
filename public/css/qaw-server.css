@@ -28,6 +28,16 @@ body {
   background: #637077; }
   .main-config.active {
     display: block; }
+  .main-config div#apk-output {
+    height: 200px;
+    width: 80%;
+    font-size: 12px;
+    margin-left: 10%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: none; }
+  .main-config div#apk-reinstall {
+    display: none; }
 
 .logo {
   text-indent: -9999px;
@@ -61,6 +71,9 @@ body {
     width: 100%;
     box-sizing: border-box;
     padding: .5em; }
+  .main-form input[type=submit] {
+    padding: 0;
+    margin-top: .5em; }
   .main-form select {
     background: none;
     border-color: #a1a9ad;
@@ -259,6 +272,42 @@ body {
     border-left-width: 0.21429em;
     border-right-width: 0.21429em; }
 
+.app-mesagges {
+  background: white; }
+
+#chart {
+  position: relative;
+  left: 40px;
+  top: 15px; }
+
+#chart_container {
+  left: 15px; }
+
+#y_axis {
+  position: absolute;
+  top: 15px;
+  bottom: 0;
+  width: 40px; }
+
+.x_tick {
+  color: black; }
+
+.buttonEvent {
+  position: absolute;
+  background: #345678; }
+
+#new_event {
+  left: 50px;
+  top: 400px; }
+
+#remove_event {
+  left: 220px;
+  top: 400px; }
+
+#stop_event {
+  left: 450px;
+  top: 400px; }
+
 #inputDiv {
   position: absolute;
   color: #000000;
@@ -311,64 +360,3 @@ body {
   #modal .qrcode-url {
     text-decoration: none;
     color: black; }
-
-/*# sourceMappingURL=qaw-server.css.map */
-
-
-#contentButton{
-  width: 200px;
-  margin-left: 50px;
-  horizontal-align: right;
-  float:right;
-  display: block;
-  margin-right: 25px;
-
-}
-.buttonAux{
-    background: #345678;
-}
-
-#buttonZoomIn{
-     font-size: 1.25em;
-
-}
-
-#buttonZoomOut{
-     font-size: 1.25em;
-}
-
-#buttonControlMovement{
-    text-align:center;
-}
-
-.actions-bar-zoom {
-  margin: .5em }
-  .actions-bar-zoom input {
-    width: 48%;
-    margin-left: 4%;
-    display: block;
-    float: left;
-    padding: 0; }
-    .actions-bar-zoom input:first-child {
-      margin-left: 0; }
-
-.actions-bar-buttons {
-  margin: .5em;
-  margin-top: 2cm;}
-  .actions-bar-buttons input {
-    width: 48%;
-    display: block;
-    margin-left: 4%;
-    float: left;
-    padding: 0; }
-    .actions-bar-buttons input:first-child {
-      margin-left: 0; }
-
-#selectDevice {
-    margin-left: 50px;
-    box-sizing: border-box;
-    padding: .5em;
-    background: none;
-    border-color: #a1a9ad;
-    border-style: solid;
-}
