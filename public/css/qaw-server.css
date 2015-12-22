@@ -363,11 +363,10 @@ body {
 
 #contentButton {
   width: 200px;
-  margin-left: 50px;
+  margin: 0 50px 25px 25px;
   horizontal-align: right;
   float: right;
-  display: block;
-  margin-right: 25px; }
+  display: block; }
 
 .buttonAux {
   background: #345678; }
