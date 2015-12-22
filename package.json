@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js",
+    "build-css": "node-sass public/css/ -o public/css/",
+    "watch-css": "nodemon -e scss -x \"npm run build-css\""
   },
   "dependencies": {
     "body-parser": "^1.12.4",
@@ -23,7 +25,10 @@
   },
   "description": "ERROR: No README data found!",
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "node-sass": "^3.4.2",
+    "nodemon": "^1.8.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Artear/QA_Wall-Logger_Server.git"
