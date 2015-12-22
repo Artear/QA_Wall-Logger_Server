@@ -17,6 +17,10 @@
         overflow-x: hidden;
         display: none;
       }
+
+      div#apk-reinstall {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -42,7 +46,16 @@
         </fieldset>
       </form>
       <div id="apk-output">
-        <p></p>
+        <code></code>
+      </div>
+      <div id="apk-reinstall">
+        <form action='javascript:void(0)' class='main-form' id='reinstall-form' method='post'>
+          <p id="apk-reinstall-name"></p>
+          <fieldset class='wrapper'>
+              <input id="apk-reinstall-button" class='btn primary' type='submit' value='Reinstalar'>
+              <input id="apk-reinstall-newfile" class='btn primary' type='submit' value='Subir Otro'>
+          </fieldset>
+        </form>
       </div>
     </section>
     <section class='main' id='step-2'></section>

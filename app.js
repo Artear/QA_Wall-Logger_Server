@@ -13,6 +13,9 @@ var bitly = new bitlyAPI({
     client_id: CONFIG.bitly_id,
     client_secret: CONFIG.bitly_secret
 });
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+
 /* Multer */
 var multer = require('multer');
 var storage = multer.diskStorage({
@@ -53,6 +56,7 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     _debug('Codiarte Response: ' + response.statusCode + " " + body);
 });
 
+// Upload de archivo e Instalacion
 app.post("/api/upload_apk", function (req, res, next) {
 
     console.log("Beginning Upload");
@@ -65,16 +69,27 @@ app.post("/api/upload_apk", function (req, res, next) {
         }
 
         console.log("Done Uploading " + req.file.originalname);
-        /*exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async: false}, function (code, output) {
-            console.log('Program output:', output);
-            io.sockets.emit('apk-installing', output);
-        }); */
+        
+        // Envio 200 con nombre de Archivo
+        res.send({status: 200, filename: req.file.originalname });
+
+        // Callback de Desinstalacion / Instalacion del nuevo
         var child = exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async:true});
             child.stdout.on('data', function(data) {
                 io.sockets.emit('apk-installing', data);
             });
-        res.sendStatus(200);
     })
+});
+
+// Reinstalacion de archivo recien subido SIN upload
+app.post("/api/reinstall_apk", function (req, res, next) {
+    // Callback de Desinstalacion / Instalacion del nuevo
+    console.log('Reinstalando : ' + req.body.file );
+    var child = exec('cli/install -f tmp/api-upload/' + req.body.file + ' -u -r', {async:true});
+        child.stdout.on('data', function(data) {
+            io.sockets.emit('apk-installing', data);
+        })
+    res.sendStatus(200);
 });
 
 app.post("/send_message", function (req, res, next) {
