@@ -4,31 +4,71 @@
     <meta charset='UTF-8'>
     <title>QA WALL Events</title>
     <link href='images/favicon.ico' rel='shortcut icon'>
+    <!-- <link href='css/normalize.css' rel='stylesheet' type='text/css'> -->
     <link href='css/qaw-server.css' rel='stylesheet' type='text/css'>
+    <link href='css/sidebar.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <h1 class='logo logo-big'>QA Wall Events</h1>
-    <div id="contentSelect">
-        <label id="labelSelect" for='selectDevice'>Device: </label>
-        <select id="selectDevice" name='device' placeholder='Device Id'></select>
-    </div>
-    <div id='chartContainer' style='height: 600px; width: 100;'></div>
-    <script data-main='js/qaw-chart' src='js/libs/requirejs-min.js' type='text/javascript'></script>
-    <div id="contentButton">
-        <!-- DEBUG BUTTONS
-        <button id="buttonLive" class="buttonAux" type="button">Live/Stop</button>
-        <button id="buttonAddEvent" class="buttonAux" type="button">Add Event</button>
-        <button id="buttonEndEvent" class="buttonAux" type="button">End Event</button>
-        -->
-        <div class='actions-bar-zoom'>
-              <input id="buttonZoomIn" class="btn primary" type="button" value='+'>
-              <input id="buttonZoomOut" class="btn primary" type="button" value='-'>
-        </div>
-        <div class='actions-bar-buttons'>
-            <input id="buttonSeeAll" class="btn" type="button" value='SEE ALL'>
-            <input id="buttonControlMovement" class="btn" type="button" value='MOVE ON'>
-        </div>
-    </div>
+    <div class="sidebar-at-left" id="main">
+        <div id="content">
+            <h1 class='logo logo-big'>QA Wall Events</h1>
+            <div id="contentSelect">
+                <label id="labelSelect" for='selectDevice'>Device: </label>
+                <select id="selectDevice" name='device' placeholder='Device Id'></select>
+            </div>
+            <div id='chartContainer' style='height: 600px; width: 100;'></div>
+            <script data-main='js/qaw-chart' src='js/libs/requirejs-min.js' type='text/javascript'></script>
+            <div id="contentButton">
+                <!-- DEBUG BUTTONS
+                <button id="buttonLive" class="buttonAux" type="button">Live/Stop</button>
+                <button id="buttonAddEvent" class="buttonAux" type="button">Add Event</button>
+                <button id="buttonEndEvent" class="buttonAux" type="button">End Event</button>
+                -->
+                <div class='actions-bar-zoom'>
+                      <input id="buttonZoomIn" class="btn primary" type="button" value='+'>
+                      <input id="buttonZoomOut" class="btn primary" type="button" value='-'>
+                </div>
+                <div class='actions-bar-buttons'>
+                    <input id="buttonSeeAll" class="btn" type="button" value='SEE ALL'>
+                    <input id="buttonControlMovement" class="btn" type="button" value='MOVE ON'>
+                </div>
+            </div>
 
+        </div>
+     
+        <div id="sidebar">
+            <form action='api/upload_apk' class='main-form' enctype='multipart/form-data' id='main-form' method='post'>
+            <fieldset class='wrapper'>
+              <div class='frm-row'>
+                <label for='fileinput'>Subir archivo</label>
+                <input class='main-input' id='fileinput' name='apk' placeholder='Subir archivo' required='required' type='file'>
+              </div>
+              <div class='frm-row  '>
+                <!--
+                  <input class='btn' type='reset' value='Reset'>
+                  <input class='btn close' type='button' value='Apagar'>
+                -->
+                <input class='btn primary' type='submit' value='Arriba'>
+              </div>
+            </fieldset>
+          </form>
+          <div id="apk-output">
+            <code></code>
+          </div>
+          <div id="apk-reinstall">
+            <form action='javascript:void(0)' class='main-form' id='reinstall-form' method='post'>
+              <p id="apk-reinstall-name"></p>
+              <fieldset class='wrapper'>
+                  <input id="apk-reinstall-button" class='btn primary' type='submit' value='Reinstalar'>
+                  <input id="apk-reinstall-newfile" class='btn primary' type='submit' value='Subir Otro'>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+        <a href="#" id="separator">
+          <span class ="configsidebar">Config</span>
+        </a>
+        <div class="clearer">&nbsp;</div>
+    </div>
   </body>
 </html>

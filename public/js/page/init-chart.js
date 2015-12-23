@@ -10,5 +10,7 @@ define(function (require) {
 
       var mesagges = require('am');
 
+      var sidebarHandler = require('sidebar');
+
   });
 });

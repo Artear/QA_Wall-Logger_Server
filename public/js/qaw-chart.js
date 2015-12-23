@@ -14,7 +14,9 @@ requirejs.config({
     io: 'libs/socket.io-1.3.6.min',
     bargraph: 'libs/bargraph',
     //Modules
-    am: 'modules/app-mesagges'
+    am: 'modules/app-mesagges',
+    sidebar: 'modules/sidebar',
+    configwall: 'modules/config-wall'
     //Plugins
 
   },
@@ -29,4 +31,5 @@ requirejs.config({
 });
 
 
+requirejs(['page/config']);
 requirejs(['page/init-chart']);

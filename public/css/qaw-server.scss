@@ -13,10 +13,11 @@ body {
 }
 
 .wrapper {
-  width: (962em/24);
+  //width: (962em/24);
   margin: 0 auto;
   position: relative;
   height: 100%;
+  border: 0px;
 }
 
 .main {
@@ -34,20 +35,6 @@ body {
   background: #637077;
   &.active {
     display:block;
-  }
-
-  div#apk-output {
-    height: 200px;
-    width: 80%;
-    font-size: 12px;
-    margin-left: 10%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    display: none;
-  }
-
-  div#apk-reinstall {
-    display: none;
   }
 }
 
@@ -119,6 +106,7 @@ body {
   text-align: left;
   font-weight: 700;
   border: (1em/24) solid #A1A9AD;
+  height: 50px;
 
   color: #B43E97;
 
@@ -595,4 +583,19 @@ body {
 #chartContainer{
     margin-left: 0.5em;
     margin-right: 1.5em;
+}
+
+div#apk-output {
+  height: 200px;
+  width: 80%;
+  font-size: 12px;
+  margin-left: 10%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: none;
+}
+
+div#apk-reinstall {
+  display: none;
+  text-align: center;
 }
