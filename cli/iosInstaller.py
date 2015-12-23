@@ -112,7 +112,26 @@ else:
 			# -------------------------------------------#
 
 		else:
-			print "Falta el bundle Id (-b)"
+			if (options.file != False):
+
+				proc = subprocess.Popen('mobiledevice get_bundle_id '+options.file+'', shell=True, stdout=subprocess.PIPE)
+				bundleId = proc.stdout.readline().rstrip()
+
+
+
+				# -------------------------------------------#
+				print 'Quiere desinstalar {}' .format(bundleId)
+				print ""
+				# -------------------------------------------#
+
+				for UDID in UDIDS:
+					proc = subprocess.Popen('mobiledevice uninstall_app -u '+UDID+' '+bundleId+'', shell=True, stdout=subprocess.PIPE)
+					print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
+
+				# -------------------------------------------#
+
+			else:
+				print "Falta el bundle Id (-b) o el app (-p)"
 	else:	
 		if (options.launch != False):
 			if (options.file != False):
