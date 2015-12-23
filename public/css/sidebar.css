@@ -30,7 +30,13 @@
   background-color: #EEE;
   display: block;
   outline: none;
-  width: 3%; }
+  width: 3%;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px; }
 
 .use-sidebar #separator {
   background: url("../images/vertical-separator.gif") repeat-y center top; }

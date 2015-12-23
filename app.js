@@ -57,40 +57,81 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
 });
 
 // Upload de archivo e Instalacion
-app.post("/api/upload_apk", function (req, res, next) {
+app.post("/api/upload_app", function (req, res, next) {
 
     console.log("Beginning Upload");
 
-    upload.single('apk')(req, res, function (err) {
+    upload.fields([{ name: 'apk', maxCount: 1 }, { name: 'ipa', maxCount: 1 }])(req, res, function (err) {
         if (err) {
             res.sendStatus(401);
             console.log("Error Uploading - " + err);
             return
         }
 
-        console.log("Done Uploading " + req.file.originalname);
+        if (req.files.apk){
+            console.log("Done Uploading " + req.files.apk[0].filename);
+        }
+        if (req.files.ipa){
+            console.log("Done Uploading " + req.files.ipa[0].filename);
+        }
         
         // Envio 200 con nombre de Archivo
-        res.send({status: 200, filename: req.file.originalname });
+        res.send({status: 200, filename: req.files });
 
         // Callback de Desinstalacion / Instalacion del nuevo
-        var child = exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async:true});
+        /* var child = exec('cli/install -f tmp/api-upload/' + req.file.originalname + ' -u -r', {async:true});
             child.stdout.on('data', function(data) {
-                io.sockets.emit('apk-installing', data);
-            });
+                io.sockets.emit('app-config-messages', data);
+            }); */
     })
 });
 
-// Reinstalacion de archivo recien subido SIN upload
-app.post("/api/reinstall_apk", function (req, res, next) {
-    // Callback de Desinstalacion / Instalacion del nuevo
-    console.log('Reinstalando : ' + req.body.file );
-    var child = exec('cli/install -f tmp/api-upload/' + req.body.file + ' -u -r', {async:true});
-        child.stdout.on('data', function(data) {
-            io.sockets.emit('apk-installing', data);
-        })
+// Instalacion de archivo recien subido SIN upload
+app.post("/api/install_app", function (req, res, next) {
+    
+    if (req.body.file.apk){
+        console.log('Instalando : ' + req.body.file.apk);
+        io.sockets.emit('app-config-messages', "Instalando: " + req.body.file.apk);
+        var apkProcess = exec('cli/install -f tmp/api-upload/' + req.body.file.apk, {async:true});
+        apkProcess.stdout.on('data', function(data) {
+            io.sockets.emit('app-config-messages', data);
+        });
+    }
+
+    if (req.body.file.ipa){
+        console.log('Instalando : ' + req.body.file.ipa);
+        io.sockets.emit('app-config-messages', "Instalando: " + req.body.file.api);
+        var ipaProcess = exec('cli/iosInstaller.py -i -p tmp/api-upload/' + req.body.file.ipa, {async:true});
+        ipaProcess.stdout.on('data', function(data) {
+            io.sockets.emit('app-config-messages', data);
+        });
+    }
     res.sendStatus(200);
 });
+
+// Lanzo la app
+app.post("/api/launch_app", function (req, res, next) {
+    
+    if (req.body.file.apk){
+        console.log('Lanzando : ' + req.body.file.apk);
+        io.sockets.emit('app-config-messages', 'Lanzando : ' + req.body.file.apk);
+        var apkProcess = exec('cli/install -u -r -f tmp/api-upload/' + req.body.file.apk, {async:true});
+        apkProcess.stdout.on('data', function(data) {
+            io.sockets.emit('app-config-messages', data);
+        });
+    }
+
+    if (req.body.file.ipa){
+        console.log('Lanzando : ' + req.body.file.ipa);
+        io.sockets.emit('app-config-messages', 'Lanzando : ' + req.body.file.api);
+        var ipaProcess = exec('cli/iosInstaller.py -l -p tmp/api-upload/' + req.body.file.ipa, {async:true});
+        ipaProcess.stdout.on('data', function(data) {
+            io.sockets.emit('app-config-messages', data);
+        });
+    }
+    res.sendStatus(200);
+});
+
 
 app.post("/send_message", function (req, res, next) {
 

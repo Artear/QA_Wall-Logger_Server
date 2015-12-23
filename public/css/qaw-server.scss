@@ -74,16 +74,27 @@ body {
     visibility: hidden;
   }
 
+  img {
+    width: 32px;
+    position: absolute;
+    margin-top: .5em;
+  }
+
   input,
   select {
     width: 100%;
     box-sizing: border-box;
-    padding: .5em;
+    padding: .5em .5em .5em 3.2em;
   }
 
   input[type=submit]{
     padding: 0;
     margin-top: .5em;
+  }
+
+  input[type=submit]:disabled{
+    background-color: #682056;
+    cursor: default;
   }
 
   select {
@@ -595,7 +606,7 @@ div#apk-output {
   display: none;
 }
 
-div#apk-reinstall {
+div#app-install {
   display: none;
   text-align: center;
 }

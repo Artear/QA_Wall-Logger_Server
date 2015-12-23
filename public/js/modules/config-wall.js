@@ -5,47 +5,19 @@ define(function (require) {
     var configWall = function () {
         var self = this;
 
-        $("#main-form").submit(function (event) {
+        // Metodo para enviar comandos a diferentes endpoints
+        /* 
+            @param {String} endpoint - la ruta a la cual hacer el POST
+            @param {Function} callback - callback que se ejecuta luego del DONE del POST
+        */
+        var sendCommands = function(endpoint,callback){
             event.stopPropagation();
             event.preventDefault();
+            var value = {
+                apk: $('#apk-install-name').html(),
+                ipa: $('#ipa-install-name').html()
+            };
 
-            // limpio el log, si hubiere uno anterior
-            $("#apk-output").hide();
-            $("#apk-output code").empty();
-
-            var formData = new FormData($(this)[0]);
-
-            $.ajax({
-                async: true,
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                type: 'POST',
-                url: 'api/upload_apk'
-            })
-            .done(function (data) {
-                console.log("Done Uploading : " + data.filename);
-                $("#fileinput").val('')
-                $('#main-form').slideUp('slow');
-                $('#apk-reinstall-name').html(data.filename);
-                $('#apk-reinstall').show();
-            });
-        });
-
-        $("#apk-reinstall-newfile").on('click',function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            $("#fileinput").val('')
-            $('#main-form').slideDown('slow');
-            $('#apk-reinstall-name').html('');
-            $('#apk-reinstall').slideUp('slow');
-        });
-
-        $("#apk-reinstall-button").on('click',function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            var value = $('#apk-reinstall-name').html();
             var dataToSend = {
                 'file': value
             };
@@ -58,12 +30,71 @@ define(function (require) {
                 data: dataToSend,
                 dataType: 'json',
                 type: 'POST',
-                url: 'api/reinstall_apk'
+                url: endpoint
             })
             .done(function (data) {
-                console.log("Done Uploading : " + data.filename);
+                //console.log("Done Uploading : " + data.filename);
+                callback(data);
             });
-        });
+        };
+
+        // Registro los eventos de click
+        var attachEvents = function() {
+            $("#main-form").submit(function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                // limpio el log, si hubiere uno anterior
+                $("#apk-output").hide();
+                $("#apk-output code").empty();
+
+                var formData = new FormData($(this)[0]);
+
+                $.ajax({
+                    async: true,
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    url: 'api/upload_app'
+                })
+                .done(function (data) {
+                    console.log("Done Uploading : " + JSON.stringify(data.filename));
+                    $("#fileinput").val('')
+                    $('#main-form').slideUp('slow');
+
+                    if (data.filename.apk){
+                        $('#apk-install-name').html(data.filename.apk[0].filename);
+                    }
+                    if (data.filename.ipa){
+                        $('#ipa-install-name').html(data.filename.ipa[0].filename);
+                    }
+                    $('#app-install').show();
+                });
+            });
+
+            $("#app-install-newfile").on('click',function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                $("#fileinput").val('')
+                $('#main-form').slideDown('slow');
+                $('#apk-install-name').html('');
+                $('#app-install').slideUp('slow');
+            });
+
+            $("#app-install-button").on('click',function (event) {
+                sendCommands('api/install_app', function(data){
+                    console.log("Done Uploading : " + data);
+                });
+            });
+
+            $("#app-launch-button").on('click',function (event) {
+                sendCommands('api/launch_app', function(data){
+                    console.log("Done Uploading : " + data);
+                });
+            });
+        }();
 
         return {
             // Metodo para escribir la salida de lo que ocurrio en la instalacion

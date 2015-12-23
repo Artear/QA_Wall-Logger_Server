@@ -56,14 +56,21 @@ body {
   .main-form label {
     display: none;
     visibility: hidden; }
+  .main-form img {
+    width: 32px;
+    position: absolute;
+    margin-top: .5em; }
   .main-form input,
   .main-form select {
     width: 100%;
     box-sizing: border-box;
-    padding: .5em; }
+    padding: .5em .5em .5em 3.2em; }
   .main-form input[type=submit] {
     padding: 0;
     margin-top: .5em; }
+  .main-form input[type=submit]:disabled {
+    background-color: #682056;
+    cursor: default; }
   .main-form select {
     background: none;
     border-color: #a1a9ad;
@@ -425,6 +432,6 @@ div#apk-output {
   overflow-x: hidden;
   display: none; }
 
-div#apk-reinstall {
+div#app-install {
   display: none;
   text-align: center; }
