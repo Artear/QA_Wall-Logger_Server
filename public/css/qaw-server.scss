@@ -531,10 +531,17 @@ body {
 #buttonZoomIn{
      font-size: 1.25em;
 
+     &:disabled{
+          background-color: #682056;
+      }
 }
 
 #buttonZoomOut{
      font-size: 1.25em;
+
+      &:disabled{
+           background-color: #682056;
+       }
 }
 
 #buttonControlMovement{
@@ -550,7 +557,6 @@ body {
     float: left;
     padding: 0;
   }
-  
   input:first-child {
     margin-left: 0;
   }

@@ -371,9 +371,13 @@ body {
 
 #buttonZoomIn {
   font-size: 1.25em; }
+  #buttonZoomIn:disabled {
+    background-color: #682056; }
 
 #buttonZoomOut {
   font-size: 1.25em; }
+  #buttonZoomOut:disabled {
+    background-color: #682056; }
 
 #buttonControlMovement {
   text-align: center; }
