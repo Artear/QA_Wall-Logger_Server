@@ -13,26 +13,25 @@ define(function (require) {
         socket.emit('join', {room: 'statistics'});
     });
 
+    var tasks = [];
+    var devices = [];
+    var currentDevice;
+
     /** Config **/
     var colorChartFont = "white";
     var titleAxisFontSize = 20;
-    /** ===== **/
 
-    var tasks = [];
     var updateInterval = 500;//Milliseconds
 
-    var vpMin = 0;
-    var vpMax = 1;
+    var axisYViewportMinimum = 0;
+    var axisYViewportMaximum = 1;
 
     var defaultXViewportMaximum = 1.5;
     var defaultXViewportMinimum = -4.5;
 
     var live = true;//false; DEBUG
     var controlMovement = false;
-    var addEventAuxVar = 5;
-
-    var devices = [];
-    var currentDevice;
+    /** ===== **/
 
     var select = document.getElementById('selectDevice');
     select.onchange=function(){
@@ -56,6 +55,28 @@ define(function (require) {
         },
 		zoomEnabled: true,
         zoomType: 'xy',
+         rangeChanged: function(e){
+
+            if (!(e.trigger === "reset") && !(e.axisY.viewportMinimum === null) &&
+                !(e.axisY.viewportMaximum === null)) {
+                axisYViewportMinimum = e.axisY.viewportMinimum;
+                axisYViewportMaximum = e.axisY.viewportMaximum;
+            }
+
+            console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
+            console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
+//            console.log(e);
+//            if (e.trigger === "reset") {
+//                    chart.options.axisX.viewportMinimum = chart.options.axisX.viewportMaximum = null;
+//                                zoomed = false;
+//                }
+//            else {
+//                minRange = e.axisX.viewportMinimum;
+//                    maxRange = e.axisX.viewportMaximum;
+//                zoomed = true;
+//                }
+//            slideBy = 0;
+          },
 		axisY: {
 			includeZero: false,
 			title: "Tiempo",
@@ -64,8 +85,8 @@ define(function (require) {
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
-            viewportMinimum: vpMin,
-            viewportMaximum: vpMax
+            viewportMinimum: axisYViewportMinimum,
+            viewportMaximum: axisYViewportMaximum
         },
 		axisX: {
 			interval: 1,
@@ -250,11 +271,8 @@ define(function (require) {
 
                 //The latest event not fit on the screen and need to scroll right.
                 if(latestEvent.y[1] > 1){
-                    vpMin = latestEvent.y[1] - 1;
-                    vpMax = latestEvent.y[1];
-
-                    chart.options.axisY.viewportMinimum = vpMin;
-                    chart.options.axisY.viewportMaximum = vpMax;
+                    axisYViewportMinimum = latestEvent.y[1] - 1;
+                    axisYViewportMaximum = latestEvent.y[1];
                 }
 
                 //If a particular event scroll to up to visualize them
@@ -270,7 +288,7 @@ define(function (require) {
 
             }
 
-            chart.render();
+            updateChart();
         }
     }
 
@@ -284,6 +302,14 @@ define(function (require) {
         return (event1.y[1] - event2.y[1]);
     }
 
+    function updateChart(){
+
+        chart.options.axisY.viewportMinimum = axisYViewportMinimum;
+        chart.options.axisY.viewportMaximum = axisYViewportMaximum;
+
+        chart.render();
+    }
+
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
@@ -292,11 +318,11 @@ define(function (require) {
                      var latestEvent = tasks[tasks.length - 1];
                      var maxValue = latestEvent.y[1];
 
-                     chart.options.axisY.viewportMinimum = 0;
-                     chart.options.axisY.viewportMaximum = maxValue;
+                     axisYViewportMinimum = 0;
+                     axisYViewportMaximum = maxValue;
 
                      chart.options.axisX.viewportMinimum = -tasks.length - 0.5;
-                     chart.render();
+                     updateChart();
 
                  }, false);
 
@@ -321,18 +347,16 @@ define(function (require) {
 
                         var maxValue = latestEvent.y[1];
 
-                        vpMin = maxValue - 1 < 0 ? 0 : maxValue - 1;
-                        vpMax = maxValue;
+                        axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
+                        axisYViewportMaximum = maxValue;
 
-                        chart.options.axisY.viewportMinimum = vpMin;
-                        chart.options.axisY.viewportMaximum = vpMax;
-
-                        console.log("viewportMinimum", vpMin);
-                        console.log("viewportMaximum", vpMax);
+                        console.log("viewportMinimum", axisYViewportMinimum);
+                        console.log("viewportMaximum", axisYViewportMaximum);
 
                         //Fix refresh graph if no new content data
                         tasks[tasks.length - 1].y[1] = tasks[tasks.length - 1].y[1] + 0.0001;
-                        chart.render();
+
+                        updateChart();
                     }
 
                  }, false);
@@ -340,26 +364,45 @@ define(function (require) {
     var buttonZoomIn = document.getElementById("buttonZoomIn");
     buttonZoomIn.addEventListener("click", function() {
 
-        if(chart.options.axisY.interval >= 0.1){
 
-            chart.options.axisY.interval = chart.options.axisY.interval * 2;
-            chart.options.axisY.viewportMinimum = vpMin;
-            chart.options.axisY.viewportMaximum = vpMax;
-            chart.render();
-            console.log(chart);
+        var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+
+        if(diff > 0.2){
+            axisYViewportMinimum = axisYViewportMinimum + 0.2;
+            axisYViewportMaximum = axisYViewportMaximum - 0.2;
+
+            updateChart();
         }
+
+        console.log("Zoom IN: " ,diff);
 
     }, false);
 
     var buttonZoomOut = document.getElementById("buttonZoomOut");
         buttonZoomOut.addEventListener("click", function() {
 
-        if(chart.options.axisY.interval >= 0.5){
-            chart.options.axisY.interval = chart.options.axisY.interval / 2;
-            chart.options.axisY.viewportMinimum = vpMin;
-            chart.options.axisY.viewportMaximum = vpMax;
-            chart.render();
+
+        var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+
+        console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
+        console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
+        console.log("Zoom OUT: ", diff);
+        if(diff < 1){
+
+            if(axisYViewportMinimum - 0.2 >= 0){
+                 axisYViewportMinimum = axisYViewportMinimum - 0.2;
+            }else{
+                axisYViewportMinimum = 0;
+            }
+
+            axisYViewportMaximum = axisYViewportMaximum + 0.2;
+
+            updateChart();
         }
+
+        console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
+        console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+
 
     }, false);
 
