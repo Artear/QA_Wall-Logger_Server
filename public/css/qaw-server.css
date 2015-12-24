@@ -427,7 +427,7 @@ body {
   margin-left: 0.5em;
   margin-right: 1.5em; }
 
-div#apk-output {
+div#app-output {
   height: 200px;
   width: 80%;
   font-size: 12px;
@@ -435,6 +435,9 @@ div#apk-output {
   overflow-y: scroll;
   overflow-x: hidden;
   display: none; }
+  div#app-output code {
+    word-wrap: break-word;
+    white-space: pre-line; }
 
 div#app-install {
   display: none;
