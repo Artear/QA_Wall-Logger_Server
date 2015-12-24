@@ -13,18 +13,22 @@ define(function (require) {
         var sendCommands = function(endpoint,callback){
             event.stopPropagation();
             event.preventDefault();
-            var value = {
-                apk: $('#apk-install-name').html(),
-                ipa: $('#ipa-install-name').html()
-            };
+            var value = {};
+            if ($('#apk-install-name').html() != ''){
+                value.apk = $('#apk-install-name').html();
+            }
+
+            if ($('#ipa-install-name').html() != ''){
+                value.ipa = $('#ipa-install-name').html();
+            }
 
             var dataToSend = {
                 'file': value
             };
 
             // limpio el log, si hubiere uno anterior
-            $("#apk-output").hide();
-            $("#apk-output code").empty();
+            $("#app-output").hide();
+            $("#app-output code").empty();
             
             $.ajax({
                 data: dataToSend,
@@ -45,8 +49,8 @@ define(function (require) {
                 event.preventDefault();
 
                 // limpio el log, si hubiere uno anterior
-                $("#apk-output").hide();
-                $("#apk-output code").empty();
+                $("#app-output").hide();
+                $("#app-output code").empty();
 
                 var formData = new FormData($(this)[0]);
 
@@ -79,8 +83,15 @@ define(function (require) {
                 event.preventDefault();
                 $("#fileinput").val('')
                 $('#main-form').slideDown('slow');
+
                 $('#apk-install-name').html('');
+                $('#ipa-install-name').html('');
+
                 $('#app-install').slideUp('slow');
+
+                // limpio el log, si hubiere uno anterior
+                $("#app-output").hide();
+                $("#app-output code").empty();
             });
 
             $("#app-install-button").on('click',function (event) {
@@ -99,13 +110,9 @@ define(function (require) {
         return {
             // Metodo para escribir la salida de lo que ocurrio en la instalacion
             writeOutput: function(data){
-                var current = $("#apk-output code").text();
-                $("#apk-output code").text( current + ' ' + data );
-                $("#apk-output").show();
-                            /*.hide()
-                            .empty()
-                            .html(data)
-                            .fadeIn('slow');*/
+                var current = $("#app-output code").text();
+                $("#app-output code").text( current + ' ' + data );
+                $("#app-output").show();
             }
         }
     };

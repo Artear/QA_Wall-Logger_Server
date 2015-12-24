@@ -14,7 +14,7 @@ define(function (require) {
     socket.on('app-config-messages', function (data) {
       configWall.writeOutput(data);
     });
-  });      
+  });
 
   $(document).ready(function () {
     configWall = require('configwall');
