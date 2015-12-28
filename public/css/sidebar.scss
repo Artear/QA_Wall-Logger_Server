@@ -23,6 +23,7 @@
  
 #separator {
     background-color: #EEE;
+    color: #B43E97;
     display: block;
     outline: none;
     width: 3%;
@@ -40,13 +41,13 @@
 }
 #separator:hover {
     background: #B43E97;
+    color: white;
 }
 
 span.configsidebar {
     transform: rotate(-90deg);
     display: inline-block;
     margin: 50px 0 0 -16px;
-    color: #B43E97;
 }
 
 /*---------*/
