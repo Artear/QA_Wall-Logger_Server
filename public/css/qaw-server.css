@@ -251,6 +251,10 @@ body {
   -ms-transform: translateY(-50%);
   transform: translateY(-50%); }
 
+#content #step-1,
+#content #step-2 {
+  width: inherit; }
+
 #summary {
   font-size: 0.58333em;
   width: 68.57143em;

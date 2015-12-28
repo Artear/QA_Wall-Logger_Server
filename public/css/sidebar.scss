@@ -26,6 +26,7 @@
     display: block;
     outline: none;
     width: 3%;
+    position: fixed;
     -webkit-border-top-right-radius: 5px;
     -webkit-border-bottom-right-radius: 5px;
     -moz-border-radius-topright: 5px;
@@ -35,6 +36,7 @@
 }
 .use-sidebar #separator {
     background: url('../images/vertical-separator.gif') repeat-y center top;
+    position: relative;
 }
 #separator:hover {
     background: #B43E97;

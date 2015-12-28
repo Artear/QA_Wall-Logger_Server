@@ -22,7 +22,9 @@ requirejs.config({
         waterfall: 'modules/waterfall',
         wpt: 'modules/wpt',
         cw: 'modules/choco-wall',
-        am: 'modules/app-mesagges'
+        am: 'modules/app-mesagges',
+        sidebar: 'modules/sidebar',
+        configwall: 'modules/config-wall'
     },
     shim: {
         io: {
@@ -35,5 +37,5 @@ requirejs.config({
     }
 });
 
-
+requirejs(['page/config']);
 requirejs(['page/init']);

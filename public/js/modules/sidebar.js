@@ -34,7 +34,7 @@ define(function (require) {
             else {
                 showSidebar();
             }
-        }).css('height', $("#content").outerHeight() + 'px');
+        }).css('height', Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 80 + 'px');
      
         // Load preference
         /*if ( $.cookie('sidebar-pref2') == null ){

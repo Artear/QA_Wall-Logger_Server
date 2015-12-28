@@ -6,6 +6,7 @@ define(function (require) {
 
     var $ = require('jquery');
     var cw = require('cw');
+    var sidebarHandler = require('sidebar');
 
     $(document).ready(function () {
 

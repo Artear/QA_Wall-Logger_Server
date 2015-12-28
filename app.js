@@ -23,7 +23,12 @@ var storage = multer.diskStorage({
         cb(null, 'tmp/api-upload/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname)
+        // in some weird cases, ipa is renamed to zip...
+        /*if (file.originalname.substr(file.originalname.length - 3) === "zip"){
+            file.originalname = file.originalname.substr(0, file.originalname.length - 4);
+        }
+        console.log(file.originalname);*/
+        cb(null, file.originalname);
     }
 });
 
@@ -72,17 +77,24 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         var messageTemp1 = message + req.body.file.apk;
         console.log(messageTemp1);
         io.sockets.emit('app-config-messages', messageTemp1);
-        var apkProcess = exec(commandAndroid, {async:true});
+        var apkProcess = exec(commandAndroid + req.body.file.apk, {async:true});
         apkProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
         });
     }
 
     if (req.body.file.ipa){
+        if (req.body.file.ipa.substr(req.body.file.ipa.length - 3) === "zip"){
+            req.body.file.ipa = req.body.file.ipa.substr(0, req.body.file.ipa.length - 4);
+        }
+
         var messageTemp2 = message + req.body.file.ipa;
         console.log(messageTemp2);
         io.sockets.emit('app-config-messages', messageTemp2);
-        var ipaProcess = exec(commandiOs, {async:true});
+
+        var ipaUnzip = exec('unzip -o tmp/api-upload/' + req.body.file.ipa + ' -d tmp/api-upload/', {async:false});
+
+        var ipaProcess = exec(commandiOs + req.body.file.ipa, {async:true});
         ipaProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
         });
@@ -90,9 +102,9 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
     res.sendStatus(200);
 };
 
+
 // Upload de archivo e Instalacion
 app.post("/api/upload_app", function (req, res, next) {
-
     console.log("Beginning Upload");
 
     upload.fields([{ name: 'apk', maxCount: 1 }, { name: 'ipa', maxCount: 1 }])(req, res, function (err) {
@@ -108,7 +120,7 @@ app.post("/api/upload_app", function (req, res, next) {
         if (req.files.ipa){
             console.log("Done Uploading " + req.files.ipa[0].filename);
         }
-        
+
         // Envio 200 con nombre de Archivo
         res.send({status: 200, filename: req.files });
     })
@@ -116,12 +128,12 @@ app.post("/api/upload_app", function (req, res, next) {
 
 // Instalacion de archivo recien subido SIN upload
 app.post("/api/install_app", function (req, res, next) {
-    cliCall(req,res, 'Instalando : ','cli/install -f tmp/api-upload/' + req.body.file.apk, 'cli/iosInstaller.py -i -p tmp/api-upload/' + req.body.file.ipa);
+    cliCall(req,res, 'Instalando : ','cli/install -f tmp/api-upload/', 'cli/iosInstaller.py -i -p tmp/api-upload/');
 });
 
 // Lanzo la app
 app.post("/api/launch_app", function (req, res, next) {
-    cliCall(req,res, 'Lanzando : ','cli/install -f tmp/api-upload/' + req.body.file.apk + ' -u -r', 'cli/iosInstaller.py -l -p tmp/api-upload/' + req.body.file.ipa);
+    cliCall(req,res, 'Lanzando : ','cli/install -u -r -f tmp/api-upload/', 'cli/iosInstaller.py -l -p tmp/api-upload/');
 });
 
 

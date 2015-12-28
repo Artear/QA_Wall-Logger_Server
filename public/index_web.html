@@ -4,132 +4,173 @@
     <meta charset='UTF-8'>
     <title>QA WALL</title>
     <link href='images/favicon.ico' rel='shortcut icon'>
-    <link href='css/normalize.css' rel='stylesheet' type='text/css'>
+    <!-- <link href='css/normalize.css' rel='stylesheet' type='text/css'> -->
     <link href='css/qaw-server.css' rel='stylesheet' type='text/css'>
     <link href='css/odometer-theme-minimal.css' rel='stylesheet' type='text/css'>
     <link href='css/waterfall.css' rel='stylesheet' type='text/css'>
+    <link href='css/sidebar.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <section class='main active' id='step-1'>
-      <h1 class='logo logo-big'>QA Wall</h1>
-      <form class='main-form' id='main-form' method='post'>
-        <!-- Always -->
-        <input name='runs' type='hidden' value='1'>
-        <fieldset class='wrapper'>
-          <div class='frm-row'>
-            <label for='frm-url'>Ingresar URL</label>
-            <input class='main-input' id='frm-url' name='url' placeholder='Ingresar URL' required='required' type='url'>
+  <div class="sidebar-at-left" id="main">
+        <div id="content">
+      <section class='main active' id='step-1'>
+        <h1 class='logo logo-big'>QA Wall</h1>
+        <form class='main-form' id='main-form' method='post'>
+          <!-- Always -->
+          <input name='runs' type='hidden' value='1'>
+          <fieldset class='wrapper'>
+            <div class='frm-row'>
+              <label for='frm-url'>Ingresar URL</label>
+              <input class='main-input' id='frm-url' name='url' placeholder='Ingresar URL' required='required' type='url'>
+            </div>
+            <div class='frm-row'>
+              <label for='frm-browser'>Navegador</label>
+              <select id='frm-browser' name='browser' placeholder='Navegador'>
+                <option disabled='disabled' selected='selected'>Navegador</option>
+                <option value='Chrome'>Chrome</option>
+                <option value='Firefox'>Firefox</option>
+              </select>
+            </div>
+            <div class='frm-row'>
+              <label for='frm-location'>Lugar</label>
+              <select id='frm-location' name='location'>
+                <option disabled='disabled' selected='selected'>Lugar</option>
+                <option value='Argentina'>Argentina</option>
+                <option value='ec2-sa-east-1'>Brasil</option>
+              </select>
+            </div>
+            <div class='frm-row'>
+              <label for='frm-connectivity'>Conectividad</label>
+              <select id='frm-connectivity' name='connectivity'>
+                <option disabled='disabled' selected='selected'>Conectividad</option>
+                <option value='Cable'>Cable (5/1 Mbps 28ms RTT)</option>
+                <option value='DSL'>DSL (1.5 Mbps/384 Kbps 50ms RTT)</option>
+                <option value='3G'>Mobile 3G (1.6 Mbps/768 Kbps 300ms RTT)</option>
+              </select>
+            </div>
+            <div class='frm-row actions-bar'>
+              <input class='btn' type='reset' value='Reset'>
+              <input class='btn close' type='button' value='Apagar'>
+              <input class='btn primary' type='submit' value='Vamos'>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+      <section class='main' id='step-2'>
+        <header class='header-sticky'>
+          <div class='wrapper'>
+            <div class='logo logo-small'>QA Wall</div>
+            <div class='actions-bar'>
+              <div class='btn again' id='again'>Otra vez</div>
+              <div class='btn primary report' id='report'>Dame reporte</div>
+            </div>
           </div>
-          <div class='frm-row'>
-            <label for='frm-browser'>Navegador</label>
-            <select id='frm-browser' name='browser' placeholder='Navegador'>
-              <option disabled='disabled' selected='selected'>Navegador</option>
-              <option value='Chrome'>Chrome</option>
-              <option value='Firefox'>Firefox</option>
-            </select>
+        </header>
+        <div class='wrapper' id='stats'>
+          <div class='block' id='pagespeed'>
+            <div class='psi-element speed'>
+              <span class='odometer'>0</span>
+            </div>
+            <div class='psi-element ux'>
+              <span class='odometer'>0</span>
+            </div>
           </div>
-          <div class='frm-row'>
-            <label for='frm-location'>Lugar</label>
-            <select id='frm-location' name='location'>
-              <option disabled='disabled' selected='selected'>Lugar</option>
-              <option value='Argentina'>Argentina</option>
-              <option value='ec2-sa-east-1'>Brasil</option>
-            </select>
-          </div>
-          <div class='frm-row'>
-            <label for='frm-connectivity'>Conectividad</label>
-            <select id='frm-connectivity' name='connectivity'>
-              <option disabled='disabled' selected='selected'>Conectividad</option>
-              <option value='Cable'>Cable (5/1 Mbps 28ms RTT)</option>
-              <option value='DSL'>DSL (1.5 Mbps/384 Kbps 50ms RTT)</option>
-              <option value='3G'>Mobile 3G (1.6 Mbps/768 Kbps 300ms RTT)</option>
-            </select>
-          </div>
-          <div class='frm-row actions-bar'>
-            <input class='btn' type='reset' value='Reset'>
-            <input class='btn close' type='button' value='Apagar'>
-            <input class='btn primary' type='submit' value='Vamos'>
-          </div>
-        </fieldset>
-      </form>
-    </section>
-    <section class='main' id='step-2'>
-      <header class='header-sticky'>
-        <div class='wrapper'>
-          <div class='logo logo-small'>QA Wall</div>
-          <div class='actions-bar'>
-            <div class='btn again' id='again'>Otra vez</div>
-            <div class='btn primary report' id='report'>Dame reporte</div>
+          <div class='block' id='wpt'>
+            <table id='summary'>
+              <thead>
+                <tr>
+                  <th class='naked' colspan='6'></th>
+                  <th class='border-sides' colspan='3'>Document Complete</th>
+                  <th colspan='3'>Fully Loaded</th>
+                </tr>
+                <tr>
+                  <th class='title naked'></th>
+                  <th>Load Time</th>
+                  <th>First Byte</th>
+                  <th>Start Render</th>
+                  <th>Speed Index</th>
+                  <th>DOM Elements</th>
+                  <th class='border-left'>Time</th>
+                  <th>Requests</th>
+                  <th>Bytes In</th>
+                  <th class='border-left'>Time</th>
+                  <th>Requests</th>
+                  <th>Bytes In</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class='item'>
+                  <td class='title'>&nbsp;</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class='border-left'></td>
+                  <td></td>
+                  <td></td>
+                  <td class='border-left'></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr class='item'>
+                  <td class='title'>&nbsp;</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class='border-left'></td>
+                  <td></td>
+                  <td></td>
+                  <td class='border-left'></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class='waterfall block' id='waterfall'></div>
           </div>
         </div>
-      </header>
-      <div class='wrapper' id='stats'>
-        <div class='block' id='pagespeed'>
-          <div class='psi-element speed'>
-            <span class='odometer'>0</span>
-          </div>
-          <div class='psi-element ux'>
-            <span class='odometer'>0</span>
-          </div>
-        </div>
-        <div class='block' id='wpt'>
-          <table id='summary'>
-            <thead>
-              <tr>
-                <th class='naked' colspan='6'></th>
-                <th class='border-sides' colspan='3'>Document Complete</th>
-                <th colspan='3'>Fully Loaded</th>
-              </tr>
-              <tr>
-                <th class='title naked'></th>
-                <th>Load Time</th>
-                <th>First Byte</th>
-                <th>Start Render</th>
-                <th>Speed Index</th>
-                <th>DOM Elements</th>
-                <th class='border-left'>Time</th>
-                <th>Requests</th>
-                <th>Bytes In</th>
-                <th class='border-left'>Time</th>
-                <th>Requests</th>
-                <th>Bytes In</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class='item'>
-                <td class='title'>&nbsp;</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class='border-left'></td>
-                <td></td>
-                <td></td>
-                <td class='border-left'></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr class='item'>
-                <td class='title'>&nbsp;</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class='border-left'></td>
-                <td></td>
-                <td></td>
-                <td class='border-left'></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class='waterfall block' id='waterfall'></div>
-        </div>
+      </section>
       </div>
-    </section>
+     
+        <div id="sidebar">
+          <form action='api/upload_apk' class='main-form' enctype='multipart/form-data' id='main-form-config' method='post'>
+            <fieldset class='wrapper'>
+              <div class='frm-row'>
+                <label for='fileinput'>Subir archivo</label>
+                <img src="images/android_icon.png"><input class='main-input' id='fileinput' name='apk' placeholder='Subir archivo' type='file' accept="apk">
+              </div>
+              <div class='frm-row'>
+                <label for='fileinput'>Subir archivo</label>
+                <img src="images/apple_icon.png"><input class='main-input' id='fileinput' name='ipa' placeholder='Subir archivo' type='file' accept="app">
+              </div>
+              <input class='btn primary' type='submit' value='Subir Archivo/s'>
+            </fieldset>
+          </form>
+          <div id="app-output">
+            <code></code>
+          </div>
+          <div id="app-install">
+            <form action='javascript:void(0)' class='main-form' id='install-form' method='post'>
+              <p id="apk-install-name"></p>
+              <p id="ipa-install-name"></p>
+              <fieldset class='wrapper'>
+                  <input id="app-install-button" class='btn primary' type='submit' value='Instalar'>
+                  <input id="app-launch-button" class='btn primary' type='submit' value='Lanzar'>
+                  <input id="app-uninstall-button" class='btn primary' type='submit' value='Desinstalar' disabled="">
+                  <input id="app-reboot-button" class='btn primary' type='submit' value='Reboot' disabled="">
+                  <input id="app-install-newfile" class='btn primary' type='submit' value='Subir otro archivo'>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+        <a href="#" id="separator">
+          <span class ="configsidebar">Config</span>
+        </a>
+        <div class="clearer">&nbsp;</div>
+    </div>
     <template id='wpt-summary'>
       <tr class='item'>
         <td class='title'>{{title}}</td>
