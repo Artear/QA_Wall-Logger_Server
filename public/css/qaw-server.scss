@@ -347,7 +347,7 @@ body {
 
 #step-1 {
   position: absolute;
-  width: 100%;
+  //width: 100%;
   background: none;
 
   top: 50%;
@@ -356,8 +356,9 @@ body {
   transform: translateY(-50%);
 }
 
+#step-1,
 #step-2 {
-
+  width: inherit;
 }
 
 #summary {

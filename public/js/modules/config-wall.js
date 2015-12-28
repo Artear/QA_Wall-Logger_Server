@@ -44,7 +44,7 @@ define(function (require) {
 
         // Registro los eventos de click
         var attachEvents = function() {
-            $("#main-form").submit(function (event) {
+            $("#main-form-config").submit(function (event) {
                 event.stopPropagation();
                 event.preventDefault();
 
@@ -66,7 +66,7 @@ define(function (require) {
                 .done(function (data) {
                     console.log("Done Uploading : " + JSON.stringify(data.filename));
                     $("#fileinput").val('')
-                    $('#main-form').slideUp('slow');
+                    $('#main-form-config').slideUp('slow');
 
                     if (data.filename.apk){
                         $('#apk-install-name').html(data.filename.apk[0].filename);
@@ -82,7 +82,7 @@ define(function (require) {
                 event.stopPropagation();
                 event.preventDefault();
                 $("#fileinput").val('')
-                $('#main-form').slideDown('slow');
+                $('#main-form-config').slideDown('slow');
 
                 $('#apk-install-name').html('');
                 $('#ipa-install-name').html('');
