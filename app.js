@@ -57,6 +57,16 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
 });
 
 // Method to call the CLI, and output the log
+/*
+    @param req {Object} the request object from the original request
+    @param res {Object} the response object from the original request
+    @param message {String} Message for the currently action to pass
+        for console.log and emit Messages to View
+    @param commandAndroid {String} the CLI command to execute for Android
+    @param commandiOs {String} the CLI command to execute for iOs
+
+    @return {Object} the object with status (if everything goes well, 200)
+*/
 var cliCall = function (req, res, message, commandAndroid, commandiOs) {
     if (req.body.file.apk){
         var messageTemp1 = message + req.body.file.apk;
