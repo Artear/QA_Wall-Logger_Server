@@ -128,17 +128,17 @@ app.post("/api/upload_app", function (req, res, next) {
 
 // App Install
 app.post("/api/install_app", function (req, res, next) {
-    cliCall(req,res, 'Instalando : ','cli/install -i -f tmp/api-upload/', 'cli/iosInstaller.py -i -p tmp/api-upload/');
+    cliCall(req,res, 'Instalando : ','python cli/install -i -f tmp/api-upload/', 'cli/iosInstaller.py -i -p tmp/api-upload/');
 });
 
 // Launch app
 app.post("/api/launch_app", function (req, res, next) {
-    cliCall(req,res, 'Lanzando : ','cli/install -l -f tmp/api-upload/', 'cli/iosInstaller.py -l -p tmp/api-upload/');
+    cliCall(req,res, 'Lanzando : ','python cli/install -l -f tmp/api-upload/', 'cli/iosInstaller.py -l -p tmp/api-upload/');
 });
 
 // Uninstall App
-app.post("/api/launch_app", function (req, res, next) {
-    cliCall(req,res, 'Desinstalando : ','cli/install -u -f tmp/api-upload/', 'cli/iosInstaller.py -u -p tmp/api-upload/');
+app.post("/api/uninstall_app", function (req, res, next) {
+    cliCall(req,res, 'Desinstalando : ','python cli/install -u -f tmp/api-upload/', 'cli/iosInstaller.py -u -p tmp/api-upload/');
 });
 
 
