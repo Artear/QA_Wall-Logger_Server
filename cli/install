@@ -17,7 +17,7 @@ parser = OptionParser()
 parser.add_option("-f", "--file", type="string", dest="file", default="", help="Path-To-APK")
 parser.add_option("-u", "--uninstall", action="store_true", dest="uninstall", default=False, help="Uninstalls the apk")
 parser.add_option("-i", "--install", action="store_true", dest="install", default=False, help="Installs the apk")
-parser.add_option("-r", "--run", action="store_true", dest="run", default=False, help="Runs the apk")
+parser.add_option("-l", "--launch", action="store_true", dest="launch", default=False, help="Launch the apk")
 (arguments, args) = parser.parse_args()
 
 # ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
@@ -62,7 +62,7 @@ else:
 
 	package = ADBUtils.get_package_from_apk(arguments.file)
 
-	if(arguments.run != False):
+	if(arguments.launch != False):
 
 		#RUNS APP
 
