@@ -23,7 +23,12 @@ var storage = multer.diskStorage({
         cb(null, 'tmp/api-upload/')
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname)
+        // in some weird cases, ipa is renamed to zip...
+        if (file.originalname.substr(file.originalname.length - 3) === "zip"){
+            file.originalname = file.originalname.substr(0, file.originalname.length - 4);
+        }
+        console.log(file.originalname);
+        cb(null, file.originalname);
     }
 });
 
@@ -82,6 +87,7 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         var messageTemp2 = message + req.body.file.ipa;
         console.log(messageTemp2);
         io.sockets.emit('app-config-messages', messageTemp2);
+
         var ipaProcess = exec(commandiOs, {async:true});
         ipaProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
@@ -90,9 +96,9 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
     res.sendStatus(200);
 };
 
+
 // Upload de archivo e Instalacion
 app.post("/api/upload_app", function (req, res, next) {
-
     console.log("Beginning Upload");
 
     upload.fields([{ name: 'apk', maxCount: 1 }, { name: 'ipa', maxCount: 1 }])(req, res, function (err) {
@@ -106,9 +112,16 @@ app.post("/api/upload_app", function (req, res, next) {
             console.log("Done Uploading " + req.files.apk[0].filename);
         }
         if (req.files.ipa){
+            /*if (req.files.ipa[0].filename.substr(req.files.ipa[0].filename.length - 3) === "zip"){
+                req.files.ipa[0].filename = req.files.ipa[0].filename.substr(0, req.files.ipa[0].filename.length - 4);
+            }*/
             console.log("Done Uploading " + req.files.ipa[0].filename);
+            //rename = req.files.ipa[0].filename;
         }
         
+        /*if (rename != null){
+            exec('mv /tmp/api-upload/' + rename + '.zip ' + rename);
+        }*/
         // Envio 200 con nombre de Archivo
         res.send({status: 200, filename: req.files });
     })
