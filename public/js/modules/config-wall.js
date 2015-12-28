@@ -105,6 +105,12 @@ define(function (require) {
                     console.log("Done Uploading : " + data);
                 });
             });
+
+            $("#app-launch-button").on('click',function (event) {
+                sendCommands('api/uninstall_app', function(data){
+                    console.log("Done Uploading : " + data);
+                });
+            });
         }();
 
         return {
