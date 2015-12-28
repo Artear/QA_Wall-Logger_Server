@@ -23,7 +23,8 @@ define(function (require) {
 
     var updateInterval = 500;//Milliseconds
 
-    var zoomAdditional = 0.2
+    var zoomAdditional = 0.2;
+
 
     var axisYViewportMinimum = 0;
     var axisYViewportMaximum = 1;
@@ -411,33 +412,55 @@ define(function (require) {
         console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
         console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
         console.log("Zoom OUT: ", diff);
-        if(diff < 10){
+        if(diff =< 3){
 
             if(axisYViewportMinimum - zoomAdditional >= 0){
+            //axisYViewportMinimum is minor than zoomAdditional
                  axisYViewportMinimum = axisYViewportMinimum - zoomAdditional;
                  axisYViewportMaximum = axisYViewportMaximum + zoomAdditional;
-            }else if(diff > 0.2){
-             //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-             //TODO encontrar patron de proporcionalidad por que repite lo mismo siempre que es menor a 0.2
-                //TODO
-                axisYViewportMinimum = 0;
-                axisYViewportMaximum = 1;
-            }else{
-                //To Fix the zoom out when the positions are near zero
-                //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-                axisYViewportMinimum = 0;
-                axisYViewportMaximum = 0.6;
 
+                 console.log("Zoom OUT 1 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
+
+            }else {
+             //axisYViewportMinimum is higher than zoomAdditional
+
+                 axisYViewportMinimum = 0;
+                 axisYViewportMaximum = diff + (zoomAdditional * 2);
+                // 0.2 + 0.4 = 0.6
+                // 0.6 + 0.4 = 1
+                // 1 + 0.4 = 1.4
+                // 4 * 0.2 = 0.8
+//                if(diff > 0.2){
+//
+//                 //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
+//                 //TODO encontrar patron de proporcionalidad por que repite lo mismo siempre que es menor a 0.2
+//                    //TODO
+//                    axisYViewportMinimum = 0;
+//                    axisYViewportMaximum = 1;
+//
+//                    console.log("Zoom OUT 2 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
+//                }else{
+//                    //To Fix the zoom out when the positions are near zero
+//                    //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
+//                    axisYViewportMinimum = 0;
+//                    axisYViewportMaximum = 0.6;
+//                    console.log("Zoom OUT 3 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
+//
+//                }
             }
 
-            updateChart();
 
             var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
-
             if(newDiff > zoomAdditional){
                  buttonZoomIn.disabled = false;
             }
+
+        }else{
+
+
         }
+
+        updateChart();
 
         console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
         console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
