@@ -171,6 +171,11 @@ body {
   &:focus {
     outline: 0;
   }
+
+  &:disabled {
+    background: #384044;
+    color: grey;
+  }
 }
 
 .primary {

@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+        socket = require('io').connect("192.168.15.146:" + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -18,12 +18,16 @@ define(function (require) {
     var currentDevice;
 
     /** Config **/
+    var DEBUG = false;
+
     var colorChartFont = "white";
     var titleAxisFontSize = 20;
 
     var updateInterval = 500;//Milliseconds
 
-    var zoomAdditional = 0.2
+    var zoomAdditional = 0.2;
+
+    var axisYInterval = 0.1;
 
     var axisYViewportMinimum = 0;
     var axisYViewportMaximum = 1;
@@ -33,6 +37,7 @@ define(function (require) {
 
     var live = true;//false; DEBUG
     var controlMovement = false;
+    var seeAll = false;
     /** ===== **/
 
     var select = document.getElementById('selectDevice');
@@ -64,25 +69,16 @@ define(function (require) {
                 axisYViewportMinimum = e.axisY.viewportMinimum;
                 axisYViewportMaximum = e.axisY.viewportMaximum;
             }
+            if(DEBUG){
+                console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
+                console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
+            }
 
-            console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
-            console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
-//            console.log(e);
-//            if (e.trigger === "reset") {
-//                    chart.options.axisX.viewportMinimum = chart.options.axisX.viewportMaximum = null;
-//                                zoomed = false;
-//                }
-//            else {
-//                minRange = e.axisX.viewportMinimum;
-//                    maxRange = e.axisX.viewportMaximum;
-//                zoomed = true;
-//                }
-//            slideBy = 0;
           },
 		axisY: {
 			includeZero: false,
 			title: "Tiempo",
-			interval: 0.1,
+			interval: axisYInterval,
             labelFontSize: 10,
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
@@ -120,10 +116,8 @@ define(function (require) {
 
 	    var yTime = [];
 
-        console.log(currentDevice.firstTime);
         if(currentDevice.firstTime == 0){
             currentDevice.firstTime = data.time;
-            console.log(currentDevice.firstTime);
         }
 
         tasks = chart.options.data[0].dataPoints;
@@ -317,6 +311,7 @@ define(function (require) {
 
     function updateChart(){
 
+        chart.options.axisY.interval = axisYInterval;
         chart.options.axisY.viewportMinimum = axisYViewportMinimum;
         chart.options.axisY.viewportMaximum = axisYViewportMaximum;
 
@@ -326,16 +321,46 @@ define(function (require) {
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
-                     //TODO insert in order desc or asc and prevent this...
-                     tasks.sort(compareEvents);
-                     var latestEvent = tasks[tasks.length - 1];
-                     var maxValue = latestEvent.y[1];
+                    seeAll = !seeAll;
 
-                     axisYViewportMinimum = 0;
-                     axisYViewportMaximum = maxValue;
+                    //TODO insert in order desc or asc and prevent this...
+                    tasks.sort(compareEvents);
+                    var latestEvent = tasks[tasks.length - 1];
+                    var maxValue = latestEvent.y[1];
 
-                     chart.options.axisX.viewportMinimum = -tasks.length - 0.5;
-                     updateChart();
+                    if(seeAll){
+                         buttonSeeAll.value = "SEE SOME";
+                         buttonZoomIn.disabled = true;
+                         buttonZoomOut.disabled = true;
+                         buttonControlMovement.disabled = true;
+
+                         axisYInterval = maxValue / 20;
+                         axisYViewportMinimum = null;
+                         axisYViewportMaximum = null;
+
+                         var cantStartEndEvent = 0;
+                         for(var i = 0; i < tasks.length; i++){
+                             //Is start-end Event? And not finished?
+                             if(tasks[i].x <= 0){
+                                 cantStartEndEvent++;
+                             }
+                         }
+
+                         chart.options.axisX.viewportMinimum = -cantStartEndEvent - 0.5;
+
+                    }else{
+                         buttonSeeAll.value = "SEE ALL";
+
+                         buttonZoomIn.disabled = false;
+                         buttonZoomOut.disabled = false;
+                         buttonControlMovement.disabled = false;
+
+                         axisYInterval = 0.1;
+                         axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
+                         axisYViewportMaximum = maxValue;
+                    }
+
+                    updateChart();
 
                  }, false);
 
@@ -348,10 +373,12 @@ define(function (require) {
                         buttonControlMovement.value = "MOVE OFF";
                         buttonZoomIn.disabled = false;
                         buttonZoomOut.disabled = false;
+                        buttonSeeAll.disabled = false;
                     }else{
                         buttonControlMovement.value = "MOVE ON";
                         buttonZoomIn.disabled = true;
                         buttonZoomOut.disabled = true;
+                        buttonSeeAll.disabled = true;
                     }
 
                     tasks = chart.options.data[0].dataPoints;
@@ -364,11 +391,14 @@ define(function (require) {
 
                         var maxValue = latestEvent.y[1];
 
+                        axisYInterval = 0.1;
                         axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
                         axisYViewportMaximum = maxValue;
 
-                        console.log("viewportMinimum", axisYViewportMinimum);
-                        console.log("viewportMaximum", axisYViewportMaximum);
+                        if(DEBUG){
+                            console.log("viewportMinimum", axisYViewportMinimum);
+                            console.log("viewportMaximum", axisYViewportMaximum);
+                        }
 
                         //Fix refresh graph if no new content data
                         tasks[tasks.length - 1].y[1] = tasks[tasks.length - 1].y[1] + 0.0001;
@@ -381,22 +411,44 @@ define(function (require) {
     var buttonZoomIn = document.getElementById("buttonZoomIn");
     buttonZoomIn.addEventListener("click", function() {
 
-
         if(axisYViewportMinimum < 0){
             axisYViewportMinimum = 0;
         }
 
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
+        if(DEBUG){
+            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom IN DIFF: ", diff);
+        }
+
         if(diff >= zoomAdditional){
-            axisYViewportMinimum = axisYViewportMinimum + zoomAdditional;
-            axisYViewportMaximum = axisYViewportMaximum - zoomAdditional;
+
+            var zoomInAdditionalProportional;
+
+            if(diff <= 3){
+                zoomInAdditionalProportional = zoomAdditional;
+                axisYInterval = 0.1;
+            }else if(diff <= 20){
+                zoomInAdditionalProportional = zoomAdditional * 5;
+                axisYInterval = 0.5;
+            }else{
+                zoomInAdditionalProportional = zoomAdditional * 20;
+                axisYInterval = 2;
+            }
+
+            axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
+            axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
 
             updateChart();
 
             var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
             if(newDiff === zoomAdditional){
                   buttonZoomIn.disabled = true;
+            }
+            if(newDiff < 90){
+                  buttonZoomOut.disabled = false;
             }
         }
 
@@ -408,39 +460,56 @@ define(function (require) {
 
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
-        console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
-        console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
-        console.log("Zoom OUT: ", diff);
-        if(diff < 10){
-
-            if(axisYViewportMinimum - zoomAdditional >= 0){
-                 axisYViewportMinimum = axisYViewportMinimum - zoomAdditional;
-                 axisYViewportMaximum = axisYViewportMaximum + zoomAdditional;
-            }else if(diff > 0.2){
-             //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-             //TODO encontrar patron de proporcionalidad por que repite lo mismo siempre que es menor a 0.2
-                //TODO
-                axisYViewportMinimum = 0;
-                axisYViewportMaximum = 1;
-            }else{
-                //To Fix the zoom out when the positions are near zero
-                //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-                axisYViewportMinimum = 0;
-                axisYViewportMaximum = 0.6;
-
-            }
-
-            updateChart();
-
-            var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
-
-            if(newDiff > zoomAdditional){
-                 buttonZoomIn.disabled = false;
-            }
+        if(diff > 90){
+            return;
         }
 
-        console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
-        console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+        if(DEBUG){
+            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom OUT DIFF: ", diff);
+        }
+
+        var zoomAdditionalProportional;
+
+        if(diff < 3){
+            zoomAdditionalProportional = zoomAdditional;
+        }else if( diff < 10){
+            zoomAdditionalProportional = zoomAdditional * 5;
+            axisYInterval = 0.5;
+        }else{
+            zoomAdditionalProportional = zoomAdditional * 20;
+            axisYInterval = 2;
+        }
+
+        if(DEBUG){
+            console.log("zoomAdditionalProportional: ", zoomAdditionalProportional);
+        }
+
+        if(axisYViewportMinimum - zoomAdditionalProportional >= 0){
+            //axisYViewportMinimum is minor than zoomAdditional
+            axisYViewportMinimum = axisYViewportMinimum - zoomAdditionalProportional;
+            axisYViewportMaximum = axisYViewportMaximum + zoomAdditionalProportional;
+        }else {
+            //axisYViewportMinimum is higher than zoomAdditional
+            axisYViewportMinimum = 0;
+            axisYViewportMaximum = diff + (zoomAdditionalProportional * 2);
+        }
+
+        var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        if(newDiff > zoomAdditionalProportional){
+             buttonZoomIn.disabled = false;
+             if(newDiff >= 90){
+                buttonZoomOut.disabled = true;
+             }
+        }
+
+        updateChart();
+
+        if(DEBUG){
+            console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
+            console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+        }
 
     }, false);
 
