@@ -7,7 +7,7 @@ define(function (require) {
     var app = {};
 
     $.getJSON( "http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/get_ip.php", function( data ) {
-        socket = require('io').connect(data.localIp + ':' + data.socket_port +'/');
+        socket = require('io').connect("192.168.15.146:" + data.socket_port +'/');
     }).done(function() {
         socket.on('log', processEvent);
         socket.emit('join', {room: 'statistics'});
@@ -37,6 +37,7 @@ define(function (require) {
 
     var live = true;//false; DEBUG
     var controlMovement = false;
+    var seeAll = false;
     /** ===== **/
 
     var select = document.getElementById('selectDevice');
@@ -320,16 +321,46 @@ define(function (require) {
     var buttonSeeAll = document.getElementById("buttonSeeAll");
     buttonSeeAll.addEventListener("click", function() {
 
-                     //TODO insert in order desc or asc and prevent this...
-                     tasks.sort(compareEvents);
-                     var latestEvent = tasks[tasks.length - 1];
-                     var maxValue = latestEvent.y[1];
+                    seeAll = !seeAll;
 
-                     axisYViewportMinimum = null;
-                     axisYViewportMaximum = null;
+                    //TODO insert in order desc or asc and prevent this...
+                    tasks.sort(compareEvents);
+                    var latestEvent = tasks[tasks.length - 1];
+                    var maxValue = latestEvent.y[1];
 
-                     chart.options.axisX.viewportMinimum = -tasks.length - 0.5;
-                     updateChart();
+                    if(seeAll){
+                         buttonSeeAll.value = "SEE SOME";
+                         buttonZoomIn.disabled = true;
+                         buttonZoomOut.disabled = true;
+                         buttonControlMovement.disabled = true;
+
+                         axisYInterval = maxValue / 20;
+                         axisYViewportMinimum = null;
+                         axisYViewportMaximum = null;
+
+                         var cantStartEndEvent = 0;
+                         for(var i = 0; i < tasks.length; i++){
+                             //Is start-end Event? And not finished?
+                             if(tasks[i].x <= 0){
+                                 cantStartEndEvent++;
+                             }
+                         }
+
+                         chart.options.axisX.viewportMinimum = -cantStartEndEvent - 0.5;
+
+                    }else{
+                         buttonSeeAll.value = "SEE ALL";
+
+                         buttonZoomIn.disabled = false;
+                         buttonZoomOut.disabled = false;
+                         buttonControlMovement.disabled = false;
+
+                         axisYInterval = 0.1;
+                         axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
+                         axisYViewportMaximum = maxValue;
+                    }
+
+                    updateChart();
 
                  }, false);
 
@@ -342,10 +373,12 @@ define(function (require) {
                         buttonControlMovement.value = "MOVE OFF";
                         buttonZoomIn.disabled = false;
                         buttonZoomOut.disabled = false;
+                        buttonSeeAll.disabled = false;
                     }else{
                         buttonControlMovement.value = "MOVE ON";
                         buttonZoomIn.disabled = true;
                         buttonZoomOut.disabled = true;
+                        buttonSeeAll.disabled = true;
                     }
 
                     tasks = chart.options.data[0].dataPoints;
