@@ -92,7 +92,7 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         console.log(messageTemp2);
         io.sockets.emit('app-config-messages', messageTemp2);
 
-        var ipaUnzip = exec('unzip -u tmp/api-upload/' + req.body.file.ipa + ' -d tmp/api-upload/', {async:false});
+        var ipaUnzip = exec('unzip -o tmp/api-upload/' + req.body.file.ipa + ' -d tmp/api-upload/', {async:false});
 
         var ipaProcess = exec(commandiOs + req.body.file.ipa, {async:true});
         ipaProcess.stdout.on('data', function(data) {
