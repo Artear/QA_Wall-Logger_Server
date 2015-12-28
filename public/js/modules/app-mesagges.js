@@ -25,6 +25,7 @@ define(function (require) {
 
     var zoomAdditional = 0.2;
 
+    var axisYInterval = 0.1;
 
     var axisYViewportMinimum = 0;
     var axisYViewportMaximum = 1;
@@ -83,7 +84,7 @@ define(function (require) {
 		axisY: {
 			includeZero: false,
 			title: "Tiempo",
-			interval: 0.1,
+			interval: axisYInterval,
             labelFontSize: 10,
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
@@ -318,6 +319,7 @@ define(function (require) {
 
     function updateChart(){
 
+        chart.options.axisY.interval = axisYInterval;
         chart.options.axisY.viewportMinimum = axisYViewportMinimum;
         chart.options.axisY.viewportMaximum = axisYViewportMaximum;
 
@@ -365,6 +367,7 @@ define(function (require) {
 
                         var maxValue = latestEvent.y[1];
 
+                        axisYInterval = 0.1;
                         axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
                         axisYViewportMaximum = maxValue;
 
@@ -382,22 +385,42 @@ define(function (require) {
     var buttonZoomIn = document.getElementById("buttonZoomIn");
     buttonZoomIn.addEventListener("click", function() {
 
-
         if(axisYViewportMinimum < 0){
             axisYViewportMinimum = 0;
         }
 
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
+        console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
+        console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
+        console.log("Zoom IN DIFF: ", diff);
+
         if(diff >= zoomAdditional){
-            axisYViewportMinimum = axisYViewportMinimum + zoomAdditional;
-            axisYViewportMaximum = axisYViewportMaximum - zoomAdditional;
+
+            var zoomInAdditionalProportional;
+
+            if(diff <= 3){
+                zoomInAdditionalProportional = zoomAdditional;
+                axisYInterval = 0.1;
+            }else if(diff <= 20){
+                zoomInAdditionalProportional = zoomAdditional * 5;
+                axisYInterval = 0.5;
+            }else{
+                zoomInAdditionalProportional = zoomAdditional * 20;
+                axisYInterval = 2;
+            }
+
+            axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
+            axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
 
             updateChart();
 
             var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
             if(newDiff === zoomAdditional){
                   buttonZoomIn.disabled = true;
+            }
+            if(newDiff < 90){
+                  buttonZoomOut.disabled = false;
             }
         }
 
@@ -409,55 +432,44 @@ define(function (require) {
 
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
+        if(diff > 90){
+            return;
+        }
+
         console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
         console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
-        console.log("Zoom OUT: ", diff);
-        if(diff =< 3){
+        console.log("Zoom OUT DIFF: ", diff);
 
-            if(axisYViewportMinimum - zoomAdditional >= 0){
-            //axisYViewportMinimum is minor than zoomAdditional
-                 axisYViewportMinimum = axisYViewportMinimum - zoomAdditional;
-                 axisYViewportMaximum = axisYViewportMaximum + zoomAdditional;
+        var zoomAdditionalProportional;
 
-                 console.log("Zoom OUT 1 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
-
-            }else {
-             //axisYViewportMinimum is higher than zoomAdditional
-
-                 axisYViewportMinimum = 0;
-                 axisYViewportMaximum = diff + (zoomAdditional * 2);
-                // 0.2 + 0.4 = 0.6
-                // 0.6 + 0.4 = 1
-                // 1 + 0.4 = 1.4
-                // 4 * 0.2 = 0.8
-//                if(diff > 0.2){
-//
-//                 //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-//                 //TODO encontrar patron de proporcionalidad por que repite lo mismo siempre que es menor a 0.2
-//                    //TODO
-//                    axisYViewportMinimum = 0;
-//                    axisYViewportMaximum = 1;
-//
-//                    console.log("Zoom OUT 2 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
-//                }else{
-//                    //To Fix the zoom out when the positions are near zero
-//                    //TODO VER QUE SI ES MAYOR A 0.2 TAMBIEN ENTRA ACA
-//                    axisYViewportMinimum = 0;
-//                    axisYViewportMaximum = 0.6;
-//                    console.log("Zoom OUT 3 : min", axisYViewportMinimum , " max: ", axisYViewportMaximum);
-//
-//                }
-            }
-
-
-            var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
-            if(newDiff > zoomAdditional){
-                 buttonZoomIn.disabled = false;
-            }
-
+        if(diff < 3){
+            zoomAdditionalProportional = zoomAdditional;
+        }else if( diff < 10){
+            zoomAdditionalProportional = zoomAdditional * 5;
+            axisYInterval = 0.5;
         }else{
+            zoomAdditionalProportional = zoomAdditional * 20;
+            axisYInterval = 2;
+        }
 
+        console.log("zoomAdditionalProportional: ", zoomAdditionalProportional);
 
+        if(axisYViewportMinimum - zoomAdditionalProportional >= 0){
+            //axisYViewportMinimum is minor than zoomAdditional
+            axisYViewportMinimum = axisYViewportMinimum - zoomAdditionalProportional;
+            axisYViewportMaximum = axisYViewportMaximum + zoomAdditionalProportional;
+        }else {
+            //axisYViewportMinimum is higher than zoomAdditional
+            axisYViewportMinimum = 0;
+            axisYViewportMaximum = diff + (zoomAdditionalProportional * 2);
+        }
+
+        var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        if(newDiff > zoomAdditionalProportional){
+             buttonZoomIn.disabled = false;
+             if(newDiff >= 90){
+                buttonZoomOut.disabled = true;
+             }
         }
 
         updateChart();
