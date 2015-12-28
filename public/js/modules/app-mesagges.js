@@ -408,8 +408,9 @@ define(function (require) {
 
                  }, false);
 
-    var buttonZoomIn = document.getElementById("buttonZoomIn");
-    buttonZoomIn.addEventListener("click", function() {
+    /* Method to zoom in into the chart
+    */
+    var zoomIn = function() {
 
         if(axisYViewportMinimum < 0){
             axisYViewportMinimum = 0;
@@ -423,7 +424,7 @@ define(function (require) {
             console.log("Zoom IN DIFF: ", diff);
         }
 
-        if(diff >= zoomAdditional){
+        if(diff > zoomAdditional){
 
             var zoomInAdditionalProportional;
 
@@ -452,12 +453,11 @@ define(function (require) {
             }
         }
 
-    }, false);
+    };
 
-    var buttonZoomOut = document.getElementById("buttonZoomOut");
-        buttonZoomOut.addEventListener("click", function() {
-
-
+    /* Method to zoom out into the chart
+    */
+    var zoomOut = function(){
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
         if(diff > 90){
@@ -511,9 +511,27 @@ define(function (require) {
             console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
         }
 
-    }, false);
+    };
+
+    /* Add listeners for zoom buttons */
+    var buttonZoomIn = document.getElementById("buttonZoomIn");
+    buttonZoomIn.addEventListener("click", zoomIn, false);
+
+    var buttonZoomOut = document.getElementById("buttonZoomOut");
+    buttonZoomOut.addEventListener("click", zoomOut, false);
 
     setInterval(timerChart, updateInterval);
+
+    $('#chartContainer').bind('mousewheel', function(e){
+        event.stopPropagation();
+        event.preventDefault();
+        if(e.originalEvent.wheelDelta /120 > 0) {
+            zoomOut();
+        }
+        else{
+            zoomIn();
+        }
+    });
 
     return app;
 
