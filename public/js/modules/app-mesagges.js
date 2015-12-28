@@ -18,6 +18,8 @@ define(function (require) {
     var currentDevice;
 
     /** Config **/
+    var DEBUG = false;
+
     var colorChartFont = "white";
     var titleAxisFontSize = 20;
 
@@ -66,20 +68,11 @@ define(function (require) {
                 axisYViewportMinimum = e.axisY.viewportMinimum;
                 axisYViewportMaximum = e.axisY.viewportMaximum;
             }
+            if(DEBUG){
+                console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
+                console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
+            }
 
-            console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
-            console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
-//            console.log(e);
-//            if (e.trigger === "reset") {
-//                    chart.options.axisX.viewportMinimum = chart.options.axisX.viewportMaximum = null;
-//                                zoomed = false;
-//                }
-//            else {
-//                minRange = e.axisX.viewportMinimum;
-//                    maxRange = e.axisX.viewportMaximum;
-//                zoomed = true;
-//                }
-//            slideBy = 0;
           },
 		axisY: {
 			includeZero: false,
@@ -122,10 +115,8 @@ define(function (require) {
 
 	    var yTime = [];
 
-        console.log(currentDevice.firstTime);
         if(currentDevice.firstTime == 0){
             currentDevice.firstTime = data.time;
-            console.log(currentDevice.firstTime);
         }
 
         tasks = chart.options.data[0].dataPoints;
@@ -334,8 +325,8 @@ define(function (require) {
                      var latestEvent = tasks[tasks.length - 1];
                      var maxValue = latestEvent.y[1];
 
-                     axisYViewportMinimum = 0;
-                     axisYViewportMaximum = maxValue;
+                     axisYViewportMinimum = null;
+                     axisYViewportMaximum = null;
 
                      chart.options.axisX.viewportMinimum = -tasks.length - 0.5;
                      updateChart();
@@ -371,8 +362,10 @@ define(function (require) {
                         axisYViewportMinimum = maxValue - 1 < 0 ? 0 : maxValue - 1;
                         axisYViewportMaximum = maxValue;
 
-                        console.log("viewportMinimum", axisYViewportMinimum);
-                        console.log("viewportMaximum", axisYViewportMaximum);
+                        if(DEBUG){
+                            console.log("viewportMinimum", axisYViewportMinimum);
+                            console.log("viewportMaximum", axisYViewportMaximum);
+                        }
 
                         //Fix refresh graph if no new content data
                         tasks[tasks.length - 1].y[1] = tasks[tasks.length - 1].y[1] + 0.0001;
@@ -391,9 +384,11 @@ define(function (require) {
 
         var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
-        console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
-        console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
-        console.log("Zoom IN DIFF: ", diff);
+        if(DEBUG){
+            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom IN DIFF: ", diff);
+        }
 
         if(diff >= zoomAdditional){
 
@@ -436,9 +431,11 @@ define(function (require) {
             return;
         }
 
-        console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
-        console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
-        console.log("Zoom OUT DIFF: ", diff);
+        if(DEBUG){
+            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom OUT DIFF: ", diff);
+        }
 
         var zoomAdditionalProportional;
 
@@ -452,7 +449,9 @@ define(function (require) {
             axisYInterval = 2;
         }
 
-        console.log("zoomAdditionalProportional: ", zoomAdditionalProportional);
+        if(DEBUG){
+            console.log("zoomAdditionalProportional: ", zoomAdditionalProportional);
+        }
 
         if(axisYViewportMinimum - zoomAdditionalProportional >= 0){
             //axisYViewportMinimum is minor than zoomAdditional
@@ -474,8 +473,10 @@ define(function (require) {
 
         updateChart();
 
-        console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
-        console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+        if(DEBUG){
+            console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
+            console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+        }
 
     }, false);
 
