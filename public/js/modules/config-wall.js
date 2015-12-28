@@ -106,7 +106,7 @@ define(function (require) {
                 });
             });
 
-            $("#app-launch-button").on('click',function (event) {
+            $("#app-uninstall-button").on('click',function (event) {
                 sendCommands('api/uninstall_app', function(data){
                     console.log("Done Uploading : " + data);
                 });
