@@ -523,13 +523,16 @@ define(function (require) {
     setInterval(timerChart, updateInterval);
 
     $('#chartContainer').bind('mousewheel', function(e){
-        event.stopPropagation();
-        event.preventDefault();
-        if(e.originalEvent.wheelDelta /120 > 0) {
-            zoomOut();
-        }
-        else{
-            zoomIn();
+
+        if(controlMovement && !(devices.length === 0)){
+            event.stopPropagation();
+            event.preventDefault();
+            if(e.originalEvent.wheelDelta /120 > 0) {
+                zoomOut();
+            }
+            else{
+                zoomIn();
+            }
         }
     });
 
