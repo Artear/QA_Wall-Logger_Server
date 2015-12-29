@@ -119,6 +119,10 @@ define(function (require) {
                 var current = $("#app-output code").text();
                 $("#app-output code").text( current + ' ' + data );
                 $("#app-output").show();
+            },
+            // Metodo para emitir una alerta con un mensaje
+            alertMessages: function(data){
+                alert(data);
             }
         }
     };

@@ -14,6 +14,9 @@ define(function (require) {
     socket.on('app-config-messages', function (data) {
       configWall.writeOutput(data);
     });
+    socket.on('app-config-end', function (data) {
+      configWall.alertMessages(data);
+    });
   });
 
   $(document).ready(function () {

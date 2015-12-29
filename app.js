@@ -75,11 +75,16 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
 var cliCall = function (req, res, message, commandAndroid, commandiOs) {
     if (req.body.file.apk){
         var messageTemp1 = message + req.body.file.apk;
+        var messageEnd1 = "Command finished with: " + req.body.file.apk;
+
         console.log(messageTemp1);
         io.sockets.emit('app-config-messages', messageTemp1);
         var apkProcess = exec(commandAndroid + req.body.file.apk, {async:true});
         apkProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
+        });
+        apkProcess.stdout.on('end', function(data) {
+            io.sockets.emit('app-config-end', messageEnd1);
         });
     }
 
@@ -89,6 +94,8 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         }
 
         var messageTemp2 = message + req.body.file.ipa;
+        var messageEnd2 = "Command finished with: " + req.body.file.ipa;
+
         console.log(messageTemp2);
         io.sockets.emit('app-config-messages', messageTemp2);
 
@@ -97,6 +104,9 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         var ipaProcess = exec(commandiOs + req.body.file.ipa, {async:true});
         ipaProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
+        });
+        ipaProcess.stdout.on('end', function(data) {
+            io.sockets.emit('app-config-end', messageEnd2);
         });
     }
     res.sendStatus(200);
