@@ -69,7 +69,7 @@ define(function (require) {
                 })
                 .done(function (data) {
                     console.log("Done Uploading : " + JSON.stringify(data.filename));
-                    $("#fileinput").val('')
+                    $(".js-fileinput").val('')
                     $('#main-form-config').slideUp('slow');
 
                     if (data.filename.apk){
@@ -86,8 +86,8 @@ define(function (require) {
                 event.stopPropagation();
                 event.preventDefault();
                 
-                $.each("#fileinput", function(i,el){
-                    el.val('')
+                $.each($(".js-fileinput"), function(i,el){
+                    $(el).val('');
                 });
                 $('#main-form-config').slideDown('slow');
 
