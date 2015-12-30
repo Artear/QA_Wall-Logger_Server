@@ -25,7 +25,8 @@ define(function (require) {
 
     var updateInterval = 500;//Milliseconds
 
-    var zoomAdditional = 0.2;
+    var zoomAxisYAdditional = 0.2;
+    var zoomAxisXAdditional = 1;
 
     var axisYInterval = 0.1;
 
@@ -34,6 +35,9 @@ define(function (require) {
 
     var defaultXViewportMaximum = 1.5;
     var defaultXViewportMinimum = -4.5;
+
+    var axisXViewportMaximum = defaultXViewportMaximum;
+    var axisXViewportMinimum = defaultXViewportMinimum;
 
     var live = true;//false; DEBUG
     var controlMovement = false;
@@ -65,13 +69,20 @@ define(function (require) {
          rangeChanged: function(e){
 
             if (!(e.trigger === "reset") && !(e.axisY.viewportMinimum === null) &&
-                !(e.axisY.viewportMaximum === null)) {
+                !(e.axisY.viewportMaximum === null) && !(e.axisX.viewportMinimum === null)
+                && !(e.axisX.viewportMaximum === null)) {
                 axisYViewportMinimum = e.axisY.viewportMinimum;
                 axisYViewportMaximum = e.axisY.viewportMaximum;
+                if(e.axisX.ViewportMinimum < -4.5){
+                    axisXViewportMinimum = e.axisX.ViewportMinimum;
+                    axisXViewportMaximum = e.axisX.ViewportMaximum;
+                }
             }
             if(DEBUG){
-                console.log("VIEWPORTMin: ", e.axisY.viewportMinimum);
-                console.log("VIEWPORTMax: ", e.axisY.viewportMaximum);
+                console.log("VIEWPORT Y Min: ", e.axisY.viewportMinimum);
+                console.log("VIEWPORT Y Max: ", e.axisY.viewportMaximum);
+                console.log("VIEWPORT X Min: ", e.axisX.viewportMinimum);
+                console.log("VIEWPORT X Max: ", e.axisX.viewportMaximum);
             }
 
           },
@@ -93,8 +104,8 @@ define(function (require) {
             titleFontSize: titleAxisFontSize,
             labelFontColor: colorChartFont,
             titleFontColor: colorChartFont,
-            viewportMaximum: defaultXViewportMaximum,
-            viewportMinimum: defaultXViewportMinimum,
+            viewportMaximum: axisXViewportMaximum,
+            viewportMinimum: axisXViewportMinimum,
             labelFormatter: function ( e ) {
                             if(e.label === null){
                                     return "";
@@ -289,8 +300,8 @@ define(function (require) {
 
                 }else if(cantStartEndEvent > (5/1)){ //There are many Start-End Events and need to scroll down.
 
-                    chart.options.axisX.viewportMinimum = -(cantStartEndEvent * 1) ;
-                    chart.options.axisX.viewportMaximum = -(cantStartEndEvent * 1) + 5;
+                    axisXViewportMinimum = -(cantStartEndEvent * 1) ;
+                    axisXViewportMaximum = -(cantStartEndEvent * 1) + 5;
                 }
 
             }
@@ -314,6 +325,9 @@ define(function (require) {
         chart.options.axisY.interval = axisYInterval;
         chart.options.axisY.viewportMinimum = axisYViewportMinimum;
         chart.options.axisY.viewportMaximum = axisYViewportMaximum;
+
+        chart.options.axisX.viewportMinimum = axisXViewportMinimum;
+        chart.options.axisX.viewportMaximum = axisXViewportMaximum;
 
         chart.render();
     }
@@ -346,7 +360,7 @@ define(function (require) {
                              }
                          }
 
-                         chart.options.axisX.viewportMinimum = -cantStartEndEvent - 0.5;
+                         axisXViewportMinimum = -cantStartEndEvent - 0.5;
 
                     }else{
                          buttonSeeAll.value = "SEE ALL";
@@ -416,99 +430,167 @@ define(function (require) {
             axisYViewportMinimum = 0;
         }
 
-        var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        var diffAxisY = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        var diffAxisX = Math.round((axisXViewportMaximum - axisXViewportMinimum) * 100) / 100;
 
         if(DEBUG){
-            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
-            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
-            console.log("Zoom IN DIFF: ", diff);
+//            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
+//            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
+//            console.log("Zoom IN diffAxisY: ", diffAxisY);
+              console.log("Zoom IN: axisXViewportMaximum ", axisXViewportMaximum);
+              console.log("Zoom IN: axisXViewportMinimum ", axisXViewportMinimum);
+              console.log("Zoom IN diffAxisX: ", diffAxisX);
         }
 
-        if(diff > zoomAdditional){
+        if(diffAxisY > zoomAxisYAdditional){
 
             var zoomInAdditionalProportional;
 
-            if(diff <= 3){
-                zoomInAdditionalProportional = zoomAdditional;
+            if(diffAxisY <= 3){
+                zoomInAdditionalProportional = zoomAxisYAdditional;
                 axisYInterval = 0.1;
-            }else if(diff <= 20){
-                zoomInAdditionalProportional = zoomAdditional * 5;
+            }else if(diffAxisY <= 20){
+                zoomInAdditionalProportional = zoomAxisYAdditional * 5;
                 axisYInterval = 0.5;
             }else{
-                zoomInAdditionalProportional = zoomAdditional * 20;
+                zoomInAdditionalProportional = zoomAxisYAdditional * 20;
                 axisYInterval = 2;
             }
 
             axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
             axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
 
-            updateChart();
 
-            var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
-            if(newDiff === zoomAdditional){
+            var newDiffAxisY = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+            if(newDiffAxisY === zoomAxisYAdditional){
                   buttonZoomIn.disabled = true;
             }
-            if(newDiff < 90){
+            if(newDiffAxisY < 90){
                   buttonZoomOut.disabled = false;
             }
         }
+
+        if(diffAxisX >= 7 && diffAxisX <= 12){
+
+            var zoomAxisXAdditionalProportional;
+
+            zoomAxisXAdditionalProportional = zoomAxisXAdditional;
+
+            console.log("Zoom IN zoomAxisXAdditionalProportional: ", zoomAxisXAdditionalProportional);
+
+            if(axisXViewportMaximum > 0){
+                axisXViewportMaximum = defaultXViewportMaximum;
+                axisXViewportMinimum = axisXViewportMinimum + zoomAxisXAdditionalProportional;
+            }else{
+
+//                if(axisXViewportMaximum - zoomAxisXAdditionalProportional >= 0){
+//                //axisXViewportMinimum is minor than zoomAxisXAdditionalProportional
+//                    axisXViewportMinimum = axisXViewportMinimum - zoomAxisXAdditionalProportional;
+//                    axisXViewportMaximum = axisXViewportMaximum + zoomAxisXAdditionalProportional;
+//                }else {
+//                    //axisXViewportMinimum is higher than zoomAxisXAdditionalProportional
+//                    axisXViewportMinimum = diffAxisX + (zoomAxisXAdditionalProportional * 2);
+//                    axisXViewportMaximum = defaultXViewportMaximum;
+//                }
+            }
+        }
+
+       updateChart();
+
+        if(DEBUG){
+//            console.log("Zoom IN AFTER: axisYViewportMinimum ", axisYViewportMinimum);
+//            console.log("Zoom IN AFTER: axisYViewportMaximum ", axisYViewportMaximum);
+            console.log("Zoom IN AFTER: axisXViewportMaximum ", axisXViewportMaximum);
+            console.log("Zoom IN AFTER: axisXViewportMinimum ", axisXViewportMinimum);
+        }
+
 
     };
 
     /* Method to zoom out into the chart
     */
     var zoomOut = function(){
-        var diff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
 
-        if(diff > 90){
+        var diffAxisY = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        var diffAxisX = Math.round((axisXViewportMaximum - axisXViewportMinimum) * 100) / 100;
+
+        if(diffAxisY > 90){
             return;
         }
 
         if(DEBUG){
-            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
-            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
-            console.log("Zoom OUT DIFF: ", diff);
+//            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
+//            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
+//            console.log("Zoom OUT diffAxisY: ", diffAxisY);
+            console.log("Zoom OUT: axisXViewportMaximum ", axisXViewportMaximum);
+            console.log("Zoom OUT: axisXViewportMinimum ", axisXViewportMinimum);
+            console.log("Zoom OUT diffAxisX: ", diffAxisX);
         }
 
-        var zoomAdditionalProportional;
+        var zoomAxisYAdditionalProportional;
+        var zoomAxisXAdditionalProportional;
 
-        if(diff < 3){
-            zoomAdditionalProportional = zoomAdditional;
-        }else if( diff < 10){
-            zoomAdditionalProportional = zoomAdditional * 5;
+        if(diffAxisY < 3){
+            zoomAxisYAdditionalProportional = zoomAxisYAdditional;
+        }else if( diffAxisY < 10){
+            zoomAxisYAdditionalProportional = zoomAxisYAdditional * 5;
             axisYInterval = 0.5;
         }else{
-            zoomAdditionalProportional = zoomAdditional * 20;
+            zoomAxisYAdditionalProportional = zoomAxisYAdditional * 20;
             axisYInterval = 2;
         }
 
         if(DEBUG){
-            console.log("zoomAdditionalProportional: ", zoomAdditionalProportional);
+//            console.log("zoomAxisYAdditionalProportional: ", zoomAxisYAdditionalProportional);
         }
 
-        if(axisYViewportMinimum - zoomAdditionalProportional >= 0){
-            //axisYViewportMinimum is minor than zoomAdditional
-            axisYViewportMinimum = axisYViewportMinimum - zoomAdditionalProportional;
-            axisYViewportMaximum = axisYViewportMaximum + zoomAdditionalProportional;
+        if(axisYViewportMinimum - zoomAxisYAdditionalProportional >= 0){
+            //axisYViewportMinimum is minor than zoomAxisYAdditionalProportional
+            axisYViewportMinimum = axisYViewportMinimum - zoomAxisYAdditionalProportional;
+            axisYViewportMaximum = axisYViewportMaximum + zoomAxisYAdditionalProportional;
         }else {
-            //axisYViewportMinimum is higher than zoomAdditional
+            //axisYViewportMinimum is higher than zoomAxisYAdditionalProportional
             axisYViewportMinimum = 0;
-            axisYViewportMaximum = diff + (zoomAdditionalProportional * 2);
+            axisYViewportMaximum = diffAxisY + (zoomAxisYAdditionalProportional * 2);
         }
 
-        var newDiff = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
-        if(newDiff > zoomAdditionalProportional){
+        var newDiffAxisY = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
+        if(newDiffAxisY > zoomAxisYAdditionalProportional){
              buttonZoomIn.disabled = false;
-             if(newDiff >= 90){
+             if(newDiffAxisY >= 90){
                 buttonZoomOut.disabled = true;
              }
+        }
+        
+        if(diffAxisX < 12){
+            zoomAxisXAdditionalProportional = zoomAxisXAdditional;
+            console.log("Zoom OUT zoomAxisXAdditionalProportional: ", zoomAxisXAdditionalProportional);
+
+            if(axisXViewportMaximum > 0){
+                axisXViewportMaximum = defaultXViewportMaximum;
+                axisXViewportMinimum = axisXViewportMinimum - 1;
+            }else{
+
+//                if(axisXViewportMaximum - zoomAxisXAdditionalProportional >= 0){
+//                //axisXViewportMinimum is minor than zoomAxisXAdditionalProportional
+//                    axisXViewportMinimum = axisXViewportMinimum - zoomAxisXAdditionalProportional;
+//                    axisXViewportMaximum = axisXViewportMaximum + zoomAxisXAdditionalProportional;
+//                }else {
+//                    //axisXViewportMinimum is higher than zoomAxisXAdditionalProportional
+//                    axisXViewportMinimum = diffAxisX + (zoomAxisXAdditionalProportional * 2);
+//                    axisXViewportMaximum = defaultXViewportMaximum;
+//                }
+            }
         }
 
         updateChart();
 
         if(DEBUG){
-            console.log("Zoom OUT AFTER: viewPortMin ", chart.options.axisY.viewportMinimum);
-            console.log("Zoom OUT AFTER: viewPortMax ", chart.options.axisY.viewportMaximum);
+//            console.log("Zoom OUT AFTER: axisYViewportMinimum ", axisYViewportMinimum);
+//            console.log("Zoom OUT AFTER: axisYViewportMaximum ", axisYViewportMaximum);
+
+            console.log("Zoom OUT AFTER: axisXViewportMaximum ", axisXViewportMaximum);
+            console.log("Zoom OUT AFTER: axisXViewportMinimum ", axisXViewportMinimum);
         }
 
     };
@@ -525,16 +607,34 @@ define(function (require) {
     $('#chartContainer').bind('mousewheel', function(e){
 
         if(controlMovement && !(devices.length === 0)){
+//        console.log(event);
             event.stopPropagation();
             event.preventDefault();
             if(e.originalEvent.wheelDelta /120 > 0) {
-                zoomOut();
+                zoomIn();
             }
             else{
-                zoomIn();
+                zoomOut();
             }
         }
     });
+
+
+//  //TODO mouse move event to zoom scroll directly to move
+//    $('#chartContainer').bind('mousemove', function(e){
+//
+//            if(controlMovement ){
+//
+//                    var parentOffset = $(this).parent().offset();
+//
+//                console.log( $(this).parent());
+//
+//                console.log("event.X: " , event.clientX - parentOffset.left);
+//                console.log("event.Y: " , event.clientY - parentOffset.top);
+//                event.stopPropagation();
+//                event.preventDefault();
+//            }
+//        });
 
     return app;
 
