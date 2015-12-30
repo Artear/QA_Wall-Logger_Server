@@ -15,33 +15,34 @@
         </div>
       </header>
       <form action='api/upload_apk' class='main-form' enctype='multipart/form-data' id='main-form-config' method='post'>
-          <fieldset class='wrapper'>
-            <div class='frm-row'>
-              <label for='fileinput'>Subir archivo</label>
-              <img src="images/android_icon.png"><input class='main-input' id='fileinput' name='apk' placeholder='Subir archivo' type='file' accept="apk">
-            </div>
-            <div class='frm-row'>
-              <label for='fileinput'>Subir archivo</label>
-              <img src="images/apple_icon.png"><input class='main-input' id='fileinput' name='ipa' placeholder='Subir archivo' type='file' accept="app">
-            </div>
-            <input class='btn primary' type='submit' value='Subir Archivo/s'>
-          </fieldset>
-        </form>
-        <div id="app-output">
-          <code></code>
-        </div>
-        <div id="app-install">
-          <form action='javascript:void(0)' class='main-form' id='install-form' method='post'>
-            <p id="apk-install-name"></p>
-            <p id="ipa-install-name"></p>
             <fieldset class='wrapper'>
-                <input id="app-install-button" class='btn primary' type='submit' value='Instalar'>
-                <input id="app-launch-button" class='btn primary' type='submit' value='Lanzar'>
-                <input id="app-uninstall-button" class='btn primary' type='submit' value='Desinstalar'>
-                <input id="app-reboot-button" class='btn primary' type='submit' value='Reboot' disabled="">
-                <input id="app-install-newfile" class='btn primary' type='submit' value='Subir otro archivo'>
+              <div class='frm-row'>
+                <label for='fileinput'>Subir archivo</label>
+                <img src="images/android_icon.png"><input class='main-input js-fileinput' id='fileinput' name='apk' placeholder='Subir archivo' type='file' accept="apk">
+              </div>
+              <div class='frm-row'>
+                <label for='fileinput'>Subir archivo</label>
+                <img src="images/apple_icon.png"><input class='main-input js-fileinput' id='fileinput' name='ipa' placeholder='Subir archivo' type='file' accept="app">
+              </div>
+              <input class='btn primary' type='submit' value='Subir Archivo/s'>
             </fieldset>
           </form>
+          <div id="app-output">
+            <code></code>
+          </div>
+          <div id="app-install">
+            <form action='javascript:void(0)' class='main-form' id='install-form' method='post'>
+              <p id="apk-install-name"></p>
+              <p id="ipa-install-name"></p>
+              <fieldset class='wrapper'>
+                  <input id="app-install-button" class='btn primary' type='submit' value='Instalar'>
+                  <input id="app-launch-button" class='btn primary' type='submit' value='Lanzar'>
+                  <input id="app-uninstall-button" class='btn primary' type='submit' value='Desinstalar'>
+                  <!-- <input id="app-reboot-button" class='btn primary' type='submit' value='Reboot' disabled=""> -->
+                  <input id="app-install-newfile" class='btn primary' type='submit' value='Subir otro archivo'>
+              </fieldset>
+            </form>
+          </div>
         </div>
     </section>
     <section class='main' id='step-2'></section>
