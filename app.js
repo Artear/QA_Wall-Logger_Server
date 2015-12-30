@@ -83,21 +83,21 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         var messageEnd2 = "Command finished with: " + req.body.file.ipa;
 
         console.log(messageTemp2);
-        io.sockets.emit('app-config-messages', messageTemp2);
-
-        var ipaUnzip = exec('unzip -o tmp/api-upload/' + req.body.file.ipa + ' -d tmp/api-upload/', {async:false});
+        io.sockets.emit('app-config-messages', messageTemp2);     
 
         var ipaProcess = exec(commandiOs + req.body.file.ipa, {async:true});
         ipaProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
         });
-        /*
+        
+        // Send alert on finish
         ipaProcess.stdout.on('end', function(data) {
             io.sockets.emit('app-config-end', messageEnd2);
-        });*/
+        });
     }
 
     if (req.body.file.apk){
+        // var apkSleep = exec('sleep 5', {async:false});
         var messageTemp1 = message + req.body.file.apk;
         var messageEnd1 = "Command finished with: " + req.body.file.apk;
 
@@ -108,9 +108,9 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
             io.sockets.emit('app-config-messages', data);
         });
         // Send an alert on finish
-        /* apkProcess.stdout.on('end', function(data) {
+        apkProcess.stdout.on('end', function(data) {
             io.sockets.emit('app-config-end', messageEnd1);
-        });*/
+        });
     }
 
     res.sendStatus(200);
@@ -132,7 +132,9 @@ app.post("/api/upload_app", function (req, res, next) {
             console.log("Done Uploading " + req.files.apk[0].filename);
         }
         if (req.files.ipa){
-            console.log("Done Uploading " + req.files.ipa[0].filename);
+            var ipaUnzip = exec('unzip -o tmp/api-upload/' + req.files.ipa[0].filename + ' -d tmp/api-upload/', {async:false});
+            console.log("Done Uploading " + req.files.ipa[0].filename.substr(0, req.files.ipa[0].filename.length - 4));
+            req.files.ipa[0].filename = req.files.ipa[0].filename.substr(0, req.files.ipa[0].filename.length - 4);
         }
 
         // Envio 200 con nombre de Archivo

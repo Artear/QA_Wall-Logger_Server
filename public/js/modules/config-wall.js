@@ -13,6 +13,10 @@ define(function (require) {
         var sendCommands = function(endpoint,callback){
             event.stopPropagation();
             event.preventDefault();
+
+            // Deshabilito los botones 
+            $('#sidebar .btn.primary').attr("disabled", true);
+
             var value = {};
             if ($('#apk-install-name').html() != ''){
                 value.apk = $('#apk-install-name').html();
@@ -81,7 +85,10 @@ define(function (require) {
             $("#app-install-newfile").on('click',function (event) {
                 event.stopPropagation();
                 event.preventDefault();
-                $("#fileinput").val('')
+                
+                $.each("#fileinput", function(i,el){
+                    el.val('')
+                });
                 $('#main-form-config').slideDown('slow');
 
                 $('#apk-install-name').html('');
@@ -122,7 +129,8 @@ define(function (require) {
             },
             // Metodo para emitir una alerta con un mensaje
             alertMessages: function(data){
-                alert(data);
+                $('#sidebar .btn.primary').attr("disabled", false);
+                //alert(data);
             }
         }
     };
