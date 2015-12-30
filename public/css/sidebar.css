@@ -1,7 +1,13 @@
 /* ------- SIDEBAR -------- */
 #sidebar {
   border-color: #BCD;
-  display: none; }
+  width: 0;
+  -webkit-transition-duration: 1s;
+  -moz-transition-duration: 1s;
+  -o-transition-duration: 1s;
+  transition-duration: 1s; }
+  #sidebar form {
+    display: none; }
 
 #content {
   border-color: #CDC;
@@ -11,7 +17,6 @@
   width: 64%; }
 
 .use-sidebar #sidebar {
-  display: block;
   width: 32%; }
 
 .sidebar-at-left #sidebar {

@@ -73,20 +73,6 @@ request("http://tn.codiarte.com/public/QA_Wall-Logger_Server-Helper/save_ip.php?
     @return {Object} the object with status (if everything goes well, 200)
 */
 var cliCall = function (req, res, message, commandAndroid, commandiOs) {
-    if (req.body.file.apk){
-        var messageTemp1 = message + req.body.file.apk;
-        var messageEnd1 = "Command finished with: " + req.body.file.apk;
-
-        console.log(messageTemp1);
-        io.sockets.emit('app-config-messages', messageTemp1);
-        var apkProcess = exec(commandAndroid + req.body.file.apk, {async:true});
-        apkProcess.stdout.on('data', function(data) {
-            io.sockets.emit('app-config-messages', data);
-        });
-        apkProcess.stdout.on('end', function(data) {
-            io.sockets.emit('app-config-end', messageEnd1);
-        });
-    }
 
     if (req.body.file.ipa){
         if (req.body.file.ipa.substr(req.body.file.ipa.length - 3) === "zip"){
@@ -105,10 +91,28 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         ipaProcess.stdout.on('data', function(data) {
             io.sockets.emit('app-config-messages', data);
         });
+        /*
         ipaProcess.stdout.on('end', function(data) {
             io.sockets.emit('app-config-end', messageEnd2);
-        });
+        });*/
     }
+
+    if (req.body.file.apk){
+        var messageTemp1 = message + req.body.file.apk;
+        var messageEnd1 = "Command finished with: " + req.body.file.apk;
+
+        console.log(messageTemp1);
+        io.sockets.emit('app-config-messages', messageTemp1);
+        var apkProcess = exec(commandAndroid + req.body.file.apk, {async:true});
+        apkProcess.stdout.on('data', function(data) {
+            io.sockets.emit('app-config-messages', data);
+        });
+        // Send an alert on finish
+        /* apkProcess.stdout.on('end', function(data) {
+            io.sockets.emit('app-config-end', messageEnd1);
+        });*/
+    }
+
     res.sendStatus(200);
 };
 
@@ -138,17 +142,17 @@ app.post("/api/upload_app", function (req, res, next) {
 
 // App Install
 app.post("/api/install_app", function (req, res, next) {
-    cliCall(req,res, 'Instalando : ','python cli/install -i -f tmp/api-upload/', 'cli/iosInstaller.py -i -p tmp/api-upload/');
+    cliCall(req,res, 'Instalando : ','python cli/install -i -f tmp/api-upload/', 'python cli/iosInstaller.py -i -p tmp/api-upload/');
 });
 
 // Launch app
 app.post("/api/launch_app", function (req, res, next) {
-    cliCall(req,res, 'Lanzando : ','python cli/install -l -f tmp/api-upload/', 'cli/iosInstaller.py -l -p tmp/api-upload/');
+    cliCall(req,res, 'Lanzando : ','python cli/install -l -f tmp/api-upload/', 'python cli/iosInstaller.py -l -p tmp/api-upload/');
 });
 
 // Uninstall App
 app.post("/api/uninstall_app", function (req, res, next) {
-    cliCall(req,res, 'Desinstalando : ','python cli/install -u -f tmp/api-upload/', 'cli/iosInstaller.py -u -p tmp/api-upload/');
+    cliCall(req,res, 'Desinstalando : ','python cli/install -u -f tmp/api-upload/', 'python cli/iosInstaller.py -u -p tmp/api-upload/');
 });
 
 

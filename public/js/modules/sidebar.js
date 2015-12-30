@@ -12,13 +12,16 @@ define(function (require) {
         // Show sidebar
         function showSidebar(){
             objMain.addClass('use-sidebar');
+            $('#sidebar form').fadeIn(1000);
             configText.hide();
             //$.cookie('sidebar-pref2', 'use-sidebar', { expires: 30 });
         }
      
         // Hide sidebar
         function hideSidebar(){
-            objMain.removeClass('use-sidebar');
+            $('#sidebar form').fadeOut('fast', function(){
+                objMain.removeClass('use-sidebar');
+            });
             configText.show();
             //$.cookie('sidebar-pref2', null, { expires: 30 });
         }
