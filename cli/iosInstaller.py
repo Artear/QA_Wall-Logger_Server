@@ -6,12 +6,22 @@ import time
 import thread
 import curses
 import datetime
+import threading
 import subprocess
 import sys
 from optparse import OptionParser
 
 
 #-------------------------------- ARG PARSE -------------------------------------------#
+def executeLaunch(UDID, APP_PATH):
+	os.system('ios-deploy -u -L -m -d -i '+UDID+' -b '+APP_PATH+'')
+
+def executeInstall(UDID, APP_PATH):
+	os.system('mobiledevice install_app -u '+UDID+' '+APP_PATH+'')
+
+def executeUninstall(UDID, bundleId):
+	os.system('mobiledevice uninstall_app -u '+UDID+' '+bundleId+'')
+
 
 parser = OptionParser()
 
@@ -90,8 +100,9 @@ if (options.install != False):			#Insta
 		# -------------------------------------------#
 
 		for UDID in UDIDS:
-			proc = subprocess.Popen('mobiledevice install_app -u '+UDID+' '+options.file+'', shell=True, stdout=subprocess.PIPE)
-			print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
+			threading.Thread(target=executeInstall, args=(UDID, options.file)).start()
+			#proc = subprocess.Popen('mobiledevice install_app -u '+UDID+' '+options.file+'', shell=True, stdout=subprocess.PIPE)
+			#print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
 
 		# -------------------------------------------#
 	else:
@@ -106,8 +117,9 @@ else:
 			# -------------------------------------------#
 
 			for UDID in UDIDS:
-				proc = subprocess.Popen('mobiledevice uninstall_app -u '+UDID+' '+options.bundleId+'', shell=True, stdout=subprocess.PIPE)
-				print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
+				threading.Thread(target=executeUninstall, args=(UDID, options.bundleId)).start()
+				#proc = subprocess.Popen('mobiledevice uninstall_app -u '+UDID+' '+options.bundleId+'', shell=True, stdout=subprocess.PIPE)
+				#print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
 
 			# -------------------------------------------#
 
@@ -125,8 +137,9 @@ else:
 				# -------------------------------------------#
 
 				for UDID in UDIDS:
-					proc = subprocess.Popen('mobiledevice uninstall_app -u '+UDID+' '+bundleId+'', shell=True, stdout=subprocess.PIPE)
-					print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
+					threading.Thread(target=executeUninstall, args=(UDID, bundleId)).start()
+					#proc = subprocess.Popen('mobiledevice uninstall_app -u '+UDID+' '+bundleId+'', shell=True, stdout=subprocess.PIPE)
+					#print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
 
 				# -------------------------------------------#
 
@@ -142,7 +155,8 @@ else:
 				# -------------------------------------------#
 
 				for UDID in UDIDS:
-					proc = subprocess.Popen('ios-deploy -u -v -L -m -d -i '+UDID+' -b '+options.file+'', shell=True, stdout=subprocess.PIPE)
+					threading.Thread(target=executeLaunch, args=(UDID, options.file)).start()
+					#proc = subprocess.Popen('ios-deploy -u -L -m -d -i '+UDID+' -b '+options.file+'', shell=True, stdout=None)
 					#print proc.stdout.readline().rstrip() +" "+ devices[UDID] 
 
 				# -------------------------------------------#
