@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import os
+import threading
+import sys
+
+from lib import CMDUtils
+from lib import ADBUtils
+
+
+# ------------------------------------------- ARG PARSE -----------------------------------------------------#
+
+CMDUtils.clear()
+
+parser = OptionParser()
+parser.add_option("-i", "--instrument", type="string", dest="instrument_name", default="", help="Instrument test name")
+(arguments, args) = parser.parse_args()
+
+# ------------------------------------------- ARG VALIDATIONS -----------------------------------------------------#
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    exit(1)
+
+if not arguments.instrument_name:
+    CMDUtils.print_error("No instrument name specified")
+    parser.print_help()
+    exit(1)
+
+devices = ADBUtils.get_connected_devices()
+
+if len(devices) == 0:
+    CMDUtils.print_error("No devices connected")
+
+
+# ------------------------------------------------------------------------------------------------------#
+# ------------------------------------------- MAIN -----------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------#
+
+
+# List devices
+ADBUtils.pretty_print_devices()
+
+
+# Start
+
+for device in devices:
+    threading.Thread(target=ADBUtils.run_instrument, args=(device, arguments.instrument_name)).start()

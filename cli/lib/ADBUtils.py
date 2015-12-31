@@ -37,7 +37,8 @@ def get_package_from_apk(p_apk_file):
 
 def get_launchable_activity(p_apk_file):
     lpipe = subprocess.Popen("aapt dump badging " + p_apk_file
-                             + " | grep launchable-activity:\\ name | cut -d \\' -f 2", shell=True, stdout=subprocess.PIPE)
+                             + " | grep launchable-activity:\\ name | cut -d \\' -f 2", shell=True,
+                             stdout=subprocess.PIPE)
     launchable_activity = lpipe.stdout.read()
     lpipe.wait()
     return launchable_activity[:-1]
@@ -49,6 +50,10 @@ def run(p_device_id, activity_full_path):
 
 def install(p_device_id, p_apk_file):
     CMDUtils.execute("adb -s " + p_device_id + " install " + p_apk_file)
+
+
+def run_instrument(p_device_id, p_instrument_name):
+    CMDUtils.execute("adb -s " + p_device_id + " shell am instrument -w " + p_instrument_name)
 
 
 def uninstall(p_device_id, package):
@@ -73,10 +78,12 @@ def open_url(p_device_id, url, browser_type):
         CMDUtils.execute("adb -s " + p_device_id + " shell am start -a android.intent.action.VIEW -d " + url)
 
     elif browser_type == BrowserType.BROWSER_CHROME:
-        CMDUtils.execute("adb -s " + p_device_id + " shell am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d " + url)
+        CMDUtils.execute(
+            "adb -s " + p_device_id + " shell am start -a android.intent.action.VIEW -n com.android.chrome/com.google.android.apps.chrome.Main -d " + url)
 
     elif browser_type == BrowserType.BROWSER_FIREFOX:
-        CMDUtils.execute("adb -s " + p_device_id + " shell am start -a android.intent.action.VIEW -n org.mozilla.firefox/.App -d " + url)
+        CMDUtils.execute(
+            "adb -s " + p_device_id + " shell am start -a android.intent.action.VIEW -n org.mozilla.firefox/.App -d " + url)
 
 
 def clear_user_data(p_device_id, package):
