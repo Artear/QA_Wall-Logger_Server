@@ -91,9 +91,11 @@ var cliCall = function (req, res, message, commandAndroid, commandiOs) {
         });
         
         // Send alert on finish
-        ipaProcess.stdout.on('end', function(data) {
-            io.sockets.emit('app-config-end', messageEnd2);
-        });
+        if (!req.body.file.apk){
+            ipaProcess.stdout.on('end', function(data) {
+                io.sockets.emit('app-config-end', messageEnd2);
+            });
+        };
     }
 
     if (req.body.file.apk){
