@@ -25,6 +25,11 @@ define(function (require) {
 
     var updateInterval = 500;//Milliseconds
 
+    var resultMediumViewPortY = 0.5;
+
+    var zoomMouseXPosition = 0;
+    var zoomMouseYPosition = 0;
+
     var zoomAxisYAdditional = 0.2;
     var zoomAxisXAdditional = 1;
 
@@ -424,7 +429,7 @@ define(function (require) {
 
     /* Method to zoom in into the chart
     */
-    var zoomIn = function() {
+    var zoomIn = function(localized) {
 
         if(axisYViewportMinimum < 0){
             axisYViewportMinimum = 0;
@@ -434,12 +439,12 @@ define(function (require) {
         var diffAxisX = Math.round((axisXViewportMaximum - axisXViewportMinimum) * 100) / 100;
 
         if(DEBUG){
-//            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
-//            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
-//            console.log("Zoom IN diffAxisY: ", diffAxisY);
-              console.log("Zoom IN: axisXViewportMaximum ", axisXViewportMaximum);
-              console.log("Zoom IN: axisXViewportMinimum ", axisXViewportMinimum);
-              console.log("Zoom IN diffAxisX: ", diffAxisX);
+            console.log("Zoom IN: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom IN: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom IN diffAxisY: ", diffAxisY);
+            console.log("Zoom IN: axisXViewportMaximum ", axisXViewportMaximum);
+            console.log("Zoom IN: axisXViewportMinimum ", axisXViewportMinimum);
+            console.log("Zoom IN diffAxisX: ", diffAxisX);
         }
 
         if(diffAxisY > zoomAxisYAdditional){
@@ -457,8 +462,16 @@ define(function (require) {
                 axisYInterval = 2;
             }
 
-            axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
-            axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
+            if(localized){
+                var addAdditional = round((axisYViewportMaximum - axisYViewportMinimum),axisYInterval) / 2;
+                console.log("LOOOG:", addAdditional);
+                var aux = zoomInAdditionalProportional / 2;
+                axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
+                axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
+            }else{
+                axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
+                axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
+            }
 
 
             var newDiffAxisY = Math.round((axisYViewportMaximum - axisYViewportMinimum) * 100) / 100;
@@ -498,8 +511,8 @@ define(function (require) {
        updateChart();
 
         if(DEBUG){
-//            console.log("Zoom IN AFTER: axisYViewportMinimum ", axisYViewportMinimum);
-//            console.log("Zoom IN AFTER: axisYViewportMaximum ", axisYViewportMaximum);
+            console.log("Zoom IN AFTER: axisYViewportMinimum ", axisYViewportMinimum);
+            console.log("Zoom IN AFTER: axisYViewportMaximum ", axisYViewportMaximum);
             console.log("Zoom IN AFTER: axisXViewportMaximum ", axisXViewportMaximum);
             console.log("Zoom IN AFTER: axisXViewportMinimum ", axisXViewportMinimum);
         }
@@ -519,9 +532,9 @@ define(function (require) {
         }
 
         if(DEBUG){
-//            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
-//            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
-//            console.log("Zoom OUT diffAxisY: ", diffAxisY);
+            console.log("Zoom OUT: viewPortMin ", axisYViewportMinimum);
+            console.log("Zoom OUT: viewPortMax ", axisYViewportMaximum);
+            console.log("Zoom OUT diffAxisY: ", diffAxisY);
             console.log("Zoom OUT: axisXViewportMaximum ", axisXViewportMaximum);
             console.log("Zoom OUT: axisXViewportMinimum ", axisXViewportMinimum);
             console.log("Zoom OUT diffAxisX: ", diffAxisX);
@@ -541,7 +554,7 @@ define(function (require) {
         }
 
         if(DEBUG){
-//            console.log("zoomAxisYAdditionalProportional: ", zoomAxisYAdditionalProportional);
+            console.log("zoomAxisYAdditionalProportional: ", zoomAxisYAdditionalProportional);
         }
 
         if(axisYViewportMinimum - zoomAxisYAdditionalProportional >= 0){
@@ -586,9 +599,8 @@ define(function (require) {
         updateChart();
 
         if(DEBUG){
-//            console.log("Zoom OUT AFTER: axisYViewportMinimum ", axisYViewportMinimum);
-//            console.log("Zoom OUT AFTER: axisYViewportMaximum ", axisYViewportMaximum);
-
+            console.log("Zoom OUT AFTER: axisYViewportMinimum ", axisYViewportMinimum);
+            console.log("Zoom OUT AFTER: axisYViewportMaximum ", axisYViewportMaximum);
             console.log("Zoom OUT AFTER: axisXViewportMaximum ", axisXViewportMaximum);
             console.log("Zoom OUT AFTER: axisXViewportMinimum ", axisXViewportMinimum);
         }
@@ -597,21 +609,23 @@ define(function (require) {
 
     /* Add listeners for zoom buttons */
     var buttonZoomIn = document.getElementById("buttonZoomIn");
-    buttonZoomIn.addEventListener("click", zoomIn, false);
+    buttonZoomIn.addEventListener("click", function() { zoomIn(false); }, false);
 
     var buttonZoomOut = document.getElementById("buttonZoomOut");
     buttonZoomOut.addEventListener("click", zoomOut, false);
 
     setInterval(timerChart, updateInterval);
 
-    $('#chartContainer').bind('mousewheel', function(e){
+    var chartContainer = $('#chartContainer');
+    chartContainer.bind('mousewheel', function(e){
 
-        if(controlMovement && !(devices.length === 0)){
+        //if(controlMovement && !(devices.length === 0)){
+        if(controlMovement){
 //        console.log(event);
             event.stopPropagation();
             event.preventDefault();
             if(e.originalEvent.wheelDelta /120 > 0) {
-                zoomIn();
+                zoomIn(true);
             }
             else{
                 zoomOut();
@@ -621,20 +635,36 @@ define(function (require) {
 
 
 //  //TODO mouse move event to zoom scroll directly to move
-//    $('#chartContainer').bind('mousemove', function(e){
-//
-//            if(controlMovement ){
-//
-//                    var parentOffset = $(this).parent().offset();
-//
-//                console.log( $(this).parent());
-//
-//                console.log("event.X: " , event.clientX - parentOffset.left);
-//                console.log("event.Y: " , event.clientY - parentOffset.top);
-//                event.stopPropagation();
-//                event.preventDefault();
-//            }
-//        });
+    chartContainer.bind('mousemove', function(e){
+
+            if(controlMovement){
+                event.stopPropagation();
+                event.preventDefault();
+
+                var offset = chartContainer.offset();
+                var width = chartContainer.width() - 40;
+
+                if(event.clientX - Math.floor(offset.left) - 40 < 0){
+                    return;
+                }
+
+                var zoomMouseXPosition = event.clientX - Math.floor(offset.left) - 40;
+                var zoomMouseYPosition = event.clientY - Math.floor(offset.top) + $(window).scrollTop();
+
+                var result = ((axisYViewportMaximum - axisYViewportMinimum) * zoomMouseXPosition / width)
+                    + axisYViewportMinimum;
+
+                resultMediumViewPortY = round(result, axisYInterval);
+                //console.log("RESULT:", resultMediumViewPortY);
+
+            }
+        });
+
+    function round(value, step) {
+        step || (step = 1.0);
+        var inv = 1.0 / step;
+        return Math.round(value * inv) / inv;
+    }
 
     return app;
 
