@@ -26,9 +26,7 @@ define(function (require) {
     var updateInterval = 500;//Milliseconds
 
     var resultMediumViewPortY = 0.5;
-
-    var zoomMouseXPosition = 0;
-    var zoomMouseYPosition = 0;
+    var zoneZoom;
 
     var zoomAxisYAdditional = 0.2;
     var zoomAxisXAdditional = 1;
@@ -463,11 +461,29 @@ define(function (require) {
             }
 
             if(localized){
-                var addAdditional = round((axisYViewportMaximum - axisYViewportMinimum),axisYInterval) / 2;
-                console.log("LOOOG:", addAdditional);
                 var aux = zoomInAdditionalProportional / 2;
-                axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
-                axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
+
+                switch (zoneZoom){
+                    case 0:
+                        axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional * 2;
+                        break;
+                    case 1:
+                        axisYViewportMinimum = axisYViewportMinimum + (zoomInAdditionalProportional - aux);
+                        axisYViewportMaximum = axisYViewportMaximum - (zoomInAdditionalProportional + aux);
+                        break;
+                    case 2:
+                        axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
+                        axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
+                        break;
+                    case 3:
+                        axisYViewportMinimum = axisYViewportMinimum + (zoomInAdditionalProportional + aux);
+                        axisYViewportMaximum = axisYViewportMaximum - (zoomInAdditionalProportional - aux);
+                        break;
+                    case 4:
+                        axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional * 2;
+                        break;
+                }
+
             }else{
                 axisYViewportMinimum = axisYViewportMinimum + zoomInAdditionalProportional;
                 axisYViewportMaximum = axisYViewportMaximum - zoomInAdditionalProportional;
@@ -633,8 +649,6 @@ define(function (require) {
         }
     });
 
-
-//  //TODO mouse move event to zoom scroll directly to move
     chartContainer.bind('mousemove', function(e){
 
             if(controlMovement){
@@ -651,14 +665,24 @@ define(function (require) {
                 var zoomMouseXPosition = event.clientX - Math.floor(offset.left) - 40;
                 var zoomMouseYPosition = event.clientY - Math.floor(offset.top) + $(window).scrollTop();
 
-                var result = ((axisYViewportMaximum - axisYViewportMinimum) * zoomMouseXPosition / width)
-                    + axisYViewportMinimum;
+                var result = ((axisYViewportMaximum - axisYViewportMinimum) * zoomMouseXPosition / width);
+                var resultMediumViewPortY = round(result, axisYInterval);
+                var zoneMin = (axisYViewportMaximum - axisYViewportMinimum) / 5;
+                zoneZoom = getZoneZoom(resultMediumViewPortY, zoneMin);
 
-                resultMediumViewPortY = round(result, axisYInterval);
-                //console.log("RESULT:", resultMediumViewPortY);
-
+                if(DEBUG){
+                    console.log("Zoom: axisYViewportMaximum ", axisYViewportMaximum);
+                    console.log("Zoom: axisYViewportMinimum ", axisYViewportMinimum);
+                    console.log("resultMediumViewPortY:", resultMediumViewPortY);
+                    console.log("ZOne zoom:", zoneZoom);
+                }
             }
         });
+
+    function getZoneZoom(resultMediumViewPortY, zoneMin){
+        var divisionZoom = resultMediumViewPortY / zoneMin;
+        return Math.floor(divisionZoom) > 4 ? 4 : Math.floor(divisionZoom);
+    }
 
     function round(value, step) {
         step || (step = 1.0);
