@@ -590,12 +590,14 @@ define(function (require) {
                 buttonZoomOut.disabled = true;
              }
         }
-        
+
         if(diffAxisX < 12){
             zoomAxisXAdditionalProportional = zoomAxisXAdditional;
-            console.log("Zoom OUT zoomAxisXAdditionalProportional: ", zoomAxisXAdditionalProportional);
+
+            console.log("Zoom OUT axisXViewportMaximum: ", axisXViewportMaximum);
 
             if(axisXViewportMaximum > 0){
+
                 axisXViewportMaximum = defaultXViewportMaximum;
                 axisXViewportMinimum = axisXViewportMinimum - 1;
             }else{
