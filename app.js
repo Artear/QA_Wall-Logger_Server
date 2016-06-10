@@ -216,6 +216,20 @@ io.on('connection', function (socket) {
      */
     socket.on('join', function (data) {
         socket.join(data.room);
+    });    
+
+    socket.on('scroll', function (data) {
+        socket.broadcast.emit('scroll', data);
+    });
+
+    socket.on('screenshot', function (data) {
+        socket.broadcast.emit('screenshot', data);
+    });
+    socket.on('newLink', function (data) {
+        socket.broadcast.emit('newLink', data);
+    });
+    socket.on('back', function (data) {
+        socket.broadcast.emit('back', data);
     });
 
     /**
@@ -232,7 +246,7 @@ io.on('connection', function (socket) {
 
         //request page speed
         //startPSI(data, socket);
-        startWPT(data, socket);
+        //startWPT(data, socket);
 
         var url = 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(data.url);
 
@@ -260,9 +274,11 @@ function _debug(data) {
  });
  }
  */
-function startWPT(data, socket) {
+function startWPT(params, socket) {
 
-    var url = data.url;
+    var url = params.url;
+    var data = params;
+
     delete(data.url);
 
     wpt.runTest(url, data, function callback(err, wptdata) {
